@@ -21,7 +21,7 @@ public class App
      */
     public static void main(String[] args)
     {
-        showWelcomeAnimation();
+        asciiAnimator.playOpeningAnimation();
 
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.start();
@@ -36,12 +36,5 @@ public class App
      * for introducing the Contact Management System in a simple text-based UI.
      * </p>
      */
-    private static void showWelcomeAnimation()
-    {
-        System.out.println("========================================");
-        System.out.println("   CMPE343 CONTACT MANAGEMENT SYSTEM    ");
-        System.out.println("========================================");
-        System.out.println();
-    }
 }
 

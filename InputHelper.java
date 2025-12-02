@@ -16,8 +16,16 @@ public class InputHelper
     public static String readString(String prompt)
     {
         System.out.print(prompt);
-        return SCANNER.nextLine().trim();
+        return SCANNER.nextLine().trim(); // boş olabilir!
     }
+    public static String readOptionalString(String prompt)
+    {
+        System.out.print(prompt);
+        return SCANNER.nextLine().trim(); // boş olabilir!
+    }
+
+
+
 
     // Boş olmayan string (zorunlu alanlar için)
     public static String readNonEmptyString(String prompt)

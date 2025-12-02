@@ -263,10 +263,16 @@ public class asciiAnimator
 
             try {
                 if (System.in.available() > 0) {
-                    System.in.read();
-                    return;           
+
+                    // <<< BUFFER CLEAN >>> 
+                    while (System.in.available() > 0) {
+                        System.in.read();
+                    }
+
+                    return;   
                 }
             } catch (Exception e) {}
+
 
             try {
                     Thread.sleep(80);

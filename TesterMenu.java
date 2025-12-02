@@ -51,7 +51,7 @@ public class TesterMenu
      * Retrieves all contacts from the database and prints them to the console.
      * Displays ID, name, nickname, primary phone, and email.
      */
-    private static void listContacts()
+    protected static void listContacts()
     {
         List<Contact> contacts = ContactDAO.getAllContacts();
 
@@ -79,102 +79,102 @@ public class TesterMenu
      * Offers single-field and multi-field search options (e.g., phone, email, nickname).
      * Displays matching results or a message if no contacts are found.
      */
-    public static void searchContacts()
+    protected static void searchContacts()
     {
         System.out.println("\n--- SEARCH CONTACTS ---");
 
-    // Guidance for the user regarding input format and search behavior
-    System.out.println("Input guidance:");
-    System.out.println("- All text searches are CASE-INSENSITIVE and use SUBSTRING matching.");
-    System.out.println("  For example, phone search '55' will match any phone number containing '55'.");
-    System.out.println("- Phone and e-mail searches accept partial values (e.g., 'yah' in e-mail).");
-    System.out.println("- If you make a mistake, simply run the search again with corrected input.\n");
+        // Guidance for the user regarding input format and search behavior
+        System.out.println("Input guidance:");
+        System.out.println("- All text searches are CASE-INSENSITIVE and use SUBSTRING matching.");
+        System.out.println("  For example, phone search '55' will match any phone number containing '55'.");
+        System.out.println("- Phone and e-mail searches accept partial values (e.g., 'yah' in e-mail).");
+        System.out.println("- If you make a mistake, simply run the search again with corrected input.\n");
 
-    System.out.println("Single-field searches:");
-    System.out.println("1) By phone (primary, substring match)");
-    System.out.println("2) By e-mail (substring match)");
-    System.out.println("3) By nickname (substring match)");
+        System.out.println("Single-field searches:");
+        System.out.println("1) By phone (primary, substring match)");
+        System.out.println("2) By e-mail (substring match)");
+        System.out.println("3) By nickname (substring match)");
 
-    System.out.println("Multi-field searches:");
-    System.out.println("4) Phone contains X AND e-mail contains Y");
-    System.out.println("5) Nickname contains X AND e-mail contains Y");
-    System.out.println("6) First name equals X AND birth month is Y (1-12)");
+        System.out.println("Multi-field searches:");
+        System.out.println("4) Phone contains X AND e-mail contains Y");
+        System.out.println("5) Nickname contains X AND e-mail contains Y");
+        System.out.println("6) First name equals X AND birth month is Y (1-12)");
 
-    System.out.println("0) Back to menu");
+        System.out.println("0) Back to menu");
 
-    int option = InputHelper.readInt("Option: ");
+        int option = InputHelper.readInt("Option: ");
 
-    if (option == 0)
-    {
-        return;
-    }
-
-    List<Contact> all = ContactDAO.getAllContacts();
-    List<Contact> result = null;
-
-    switch (option)
-    {
-        case 1:
+        if (option == 0)
         {
-            String q = InputHelper.readNonEmptyString("Phone contains: ");
-            result = ContactSearch.searchByPhone(all, q);
-            break;
-        }
-        case 2:
-        {
-            String q = InputHelper.readNonEmptyString("E-mail contains: ");
-            result = ContactSearch.searchByEmail(all, q);
-            break;
-        }
-        case 3:
-        {
-            String q = InputHelper.readNonEmptyString("Nickname contains: ");
-            result = ContactSearch.searchByNickname(all, q);
-            break;
-        }
-        case 4:
-        {
-            String phoneSub = InputHelper.readNonEmptyString("Phone contains: ");
-            String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
-            result = ContactSearch.searchByPhoneAndEmail(all, phoneSub, emailSub);
-            break;
-        }
-        case 5:
-        {
-            String nickSub = InputHelper.readNonEmptyString("Nickname contains: ");
-            String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
-            result = ContactSearch.searchByNicknameAndEmail(all, nickSub, emailSub);
-            break;
-        }
-        case 6:
-        {
-            String firstNameExact = InputHelper.readNonEmptyString("First name (exact match): ");
-            int month = InputHelper.readIntInRange("Birth month", 1, 12);
-            result = ContactSearch.searchByFirstNameAndBirthMonth(all, firstNameExact, month);
-            break;
-        }
-        default:
-            System.out.println("Invalid option.");
             return;
-    }
+        }
 
-    if (result == null || result.isEmpty())
-    {
-        System.out.println("No matching contacts found.");
-        return;
-    }
+        List<Contact> all = ContactDAO.getAllContacts();
+        List<Contact> result = null;
 
-    System.out.println("\n--- SEARCH RESULTS ---");
-    for (Contact c : result)
-    {
-        System.out.println(
-            c.getContactId() + " - " +
-            c.getFirstName() + " " + c.getLastName() +
-            " (" + c.getNickname() + ") | " +
-            c.getPhonePrimary() + " | " +
-            c.getEmail()
-        );
-    }
+        switch (option)
+        {
+            case 1:
+            {
+                String q = InputHelper.readNonEmptyString("Phone contains: ");
+                result = ContactSearch.searchByPhone(all, q);
+                break;
+            }
+            case 2:
+            {
+                String q = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByEmail(all, q);
+                break;
+            }
+            case 3:
+            {
+                String q = InputHelper.readNonEmptyString("Nickname contains: ");
+                result = ContactSearch.searchByNickname(all, q);
+                break;
+            }
+            case 4:
+            {
+                String phoneSub = InputHelper.readNonEmptyString("Phone contains: ");
+                String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByPhoneAndEmail(all, phoneSub, emailSub);
+                break;
+            }
+            case 5:
+            {
+                String nickSub = InputHelper.readNonEmptyString("Nickname contains: ");
+                String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByNicknameAndEmail(all, nickSub, emailSub);
+                break;
+            }
+            case 6:
+            {
+                String firstNameExact = InputHelper.readNonEmptyString("First name (exact match): ");
+                int month = InputHelper.readIntInRange("Birth month", 1, 12);
+                result = ContactSearch.searchByFirstNameAndBirthMonth(all, firstNameExact, month);
+                break;
+            }
+            default:
+                System.out.println("Invalid option.");
+                return;
+        }
+
+        if (result == null || result.isEmpty())
+        {
+            System.out.println("No matching contacts found.");
+            return;
+        }
+
+        System.out.println("\n--- SEARCH RESULTS ---");
+        for (Contact c : result)
+        {
+            System.out.println(
+                c.getContactId() + " - " +
+                c.getFirstName() + " " + c.getLastName() +
+                " (" + c.getNickname() + ") | " +
+                c.getPhonePrimary() + " | " +
+                c.getEmail()
+            );
+        }
 
     }
 
@@ -182,7 +182,7 @@ public class TesterMenu
      * Sorts all contacts based on a user-selected field (Name, Last Name, Birth Date)
      * and order (Ascending/Descending), then displays the sorted list.
      */
-    public static void sortContacts()
+    protected static void sortContacts()
     {
         System.out.println("\n--- SORT CONTACTS ---");
         System.out.println("1) By first name");
