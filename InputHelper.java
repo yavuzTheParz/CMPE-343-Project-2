@@ -4,38 +4,22 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-/**
- * Utility class for reading and validating user input from the console.
- * <p>
- * Provides helper methods for reading strings, integers, dates, emails,
- * phone numbers, yes/no answers, and roles with basic validation.
- * </p>
- */
 public class InputHelper
 {
     private static final Scanner SCANNER = new Scanner(System.in);
 
+    // Rehber metinleri sadece ilk seferde göstermek için
     private static boolean PHONE_GUIDANCE_SHOWN = false;
     private static boolean DATE_GUIDANCE_SHOWN  = false;
 
-    /**
-     * Reads a basic string input.
-     *
-     * @param prompt text shown to the user
-     * @return trimmed input string
-     */
+    // Basit string okuma
     public static String readString(String prompt)
     {
         System.out.print(prompt);
         return SCANNER.nextLine().trim();
     }
 
-    /**
-     * Reads a non-empty string.
-     *
-     * @param prompt input prompt
-     * @return non-empty string
-     */
+    // Boş olmayan string (zorunlu alanlar için)
     public static String readNonEmptyString(String prompt)
     {
         while (true)
@@ -52,18 +36,14 @@ public class InputHelper
         }
     }
 
-    /**
-     * Reads a name consisting only of letters and allowed characters.
-     *
-     * @param prompt input prompt
-     * @return validated name
-     */
+    // Sadece harf (ve boşluk) içeren isim alanları (Türkçe karakterler dahil)
     public static String readName(String prompt)
     {
         while (true)
         {
             String value = readNonEmptyString(prompt);
 
+            // Türkçe karakterleri de içeren basit bir pattern
             if (value.matches("[a-zA-ZçÇğĞıİöÖşŞüÜ\\s'-]+"))
             {
                 return value;
@@ -73,12 +53,7 @@ public class InputHelper
         }
     }
 
-    /**
-     * Reads an integer value.
-     *
-     * @param prompt input prompt
-     * @return parsed integer
-     */
+    // Integer okuma
     public static int readInt(String prompt)
     {
         while (true)
@@ -97,20 +72,12 @@ public class InputHelper
         }
     }
 
-    /**
-     * Reads an integer within a specific range.
-     *
-     * @param prompt input prompt
-     * @param min minimum allowed
-     * @param max maximum allowed
-     * @return validated integer
-     */
+    // Belirli aralıkta integer
     public static int readIntInRange(String prompt, int min, int max)
     {
         while (true)
         {
             int value = readInt(prompt + " (" + min + " - " + max + "): ");
-
             if (value >= min && value <= max)
             {
                 return value;
@@ -120,19 +87,16 @@ public class InputHelper
         }
     }
 
-    /**
-     * Reads a required date in YYYY-MM-DD format.
-     *
-     * @param prompt input prompt
-     * @return valid LocalDate
-     */
+    // Tarih okuma (zorunlu)
     public static LocalDate readDate(String prompt)
     {
+        // Kullanıcıya tarih formatı ve mantıksız tarihler için açıklama
         if (!DATE_GUIDANCE_SHOWN)
         {
             System.out.println("\nDate input guidance:");
-            System.out.println("- Format: YYYY-MM-DD (e.g., 2025-11-29)");
-            System.out.println("- Invalid dates such as 2025-02-30 are rejected.\n");
+            System.out.println("- Please enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
+            System.out.println("- Logically invalid dates such as 2025-02-30 will be rejected.");
+            System.out.println("- If you make a mistake, simply enter the date again.\n");
             DATE_GUIDANCE_SHOWN = true;
         }
 
@@ -143,28 +107,25 @@ public class InputHelper
 
             try
             {
+                // LocalDate.parse zaten 30 Şubat, 31 Kasım gibi hatalı tarihleri de reddeder
                 return LocalDate.parse(line);
             }
             catch (DateTimeParseException e)
             {
-                System.out.println("Invalid date. Please try again.");
+                System.out.println("Invalid date. Make sure the date exists in the calendar and use YYYY-MM-DD (e.g., 2025-11-29).");
             }
         }
     }
 
-    /**
-     * Reads an optional date (empty input allowed).
-     *
-     * @param prompt input prompt
-     * @return LocalDate or null
-     */
+    // Tarih okuma (boş geçilebilir)
     public static LocalDate readOptionalDate(String prompt)
     {
         if (!DATE_GUIDANCE_SHOWN)
         {
             System.out.println("\nDate input guidance:");
-            System.out.println("- Format: YYYY-MM-DD");
-            System.out.println("- Leave empty to skip.\n");
+            System.out.println("- Please enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
+            System.out.println("- Logically invalid dates such as 2025-02-30 will be rejected.");
+            System.out.println("- Leave the field empty if you do not want to change the date.\n");
             DATE_GUIDANCE_SHOWN = true;
         }
 
@@ -184,19 +145,26 @@ public class InputHelper
             }
             catch (DateTimeParseException e)
             {
-                System.out.println("Invalid date. Please try again.");
+                System.out.println("Invalid date. Make sure the date exists in the calendar and use YYYY-MM-DD (e.g., 2025-11-29).");
             }
         }
     }
 
-    /**
-     * Reads an email address with validation.
-     *
-     * @param prompt input prompt
-     * @return validated email
-     */
+    // Email okuma
     public static String readEmail(String prompt)
     {
+        System.out.println("\nEmail input guidance:");
+        System.out.println("- Please enter your email in the form username@domain.extension");
+        System.out.println("  Examples:");
+        System.out.println("    ahmet.kaya@gmail.com");
+        System.out.println("    veli_123@outlook.com");
+        System.out.println("    ayse@itu.edu.tr");
+        System.out.println("- Common mistakes:");
+        System.out.println("  * Missing '@' or using more than one '@' (e.g., ahmet@@gmail.com).");
+        System.out.println("  * Missing domain or extension (e.g., ahmet@, ahmet@gmail).");
+        System.out.println("  * Using spaces inside the email (e.g., ah met@gmail.com).");
+        System.out.println("- If the system rejects your email, correct the format and try again.\n");
+
         while (true)
         {
             String email = readNonEmptyString(prompt);
@@ -206,16 +174,11 @@ public class InputHelper
                 return email;
             }
 
-            System.out.println("Please enter a valid e-mail address.");
+            System.out.println("Please enter a valid e-mail address (example: name@example.com).");
         }
     }
 
-    /**
-     * Reads an optional email address.
-     *
-     * @param prompt input prompt
-     * @return validated email or empty string
-     */
+    // Opsiyonel email (boş olabilir)
     public static String readOptionalEmail(String prompt)
     {
         while (true)
@@ -233,22 +196,28 @@ public class InputHelper
                 return email;
             }
 
-            System.out.println("Please enter a valid email.");
+            System.out.println("Please enter a valid e-mail address (example: name@example.com).");
         }
     }
 
-    /**
-     * Reads a phone number.
-     *
-     * @param prompt input prompt
-     * @return validated phone number
-     */
+    // Telefon numarası okuma (zorunlu)
     public static String readPhone(String prompt)
     {
+        // Kullanıcıya telefon formatı ve yaygın hatalar hakkında rehber (sadece ilk sefer)
         if (!PHONE_GUIDANCE_SHOWN)
         {
             System.out.println("\nPhone number input guidance:");
-            System.out.println("- Digits only, optionally + or spaces allowed.\n");
+            System.out.println("- Enter a realistic phone number with digits only, optionally starting with '+' and using spaces or dashes.");
+            System.out.println("  Examples of accepted formats:");
+            System.out.println("    05551234567");
+            System.out.println("    5551234567");
+            System.out.println("    +905551234567");
+            System.out.println("    +90 555 123 45 67");
+            System.out.println("- Common mistakes:");
+            System.out.println("  * Too few digits or too many digits (we expect about 10–15 digits in total).");
+            System.out.println("  * Using letters instead of digits.");
+            System.out.println("  * Repeating the same digit many times (e.g., 0000000000).");
+            System.out.println("- If the system rejects your phone number, check the length and characters, then try again.\n");
             PHONE_GUIDANCE_SHOWN = true;
         }
 
@@ -261,16 +230,50 @@ public class InputHelper
                 return phone;
             }
 
-            System.out.println("Invalid phone number. Please try again.");
+            System.out.println("Invalid phone number. Please follow the guidance above and try again.");
         }
     }
 
-    /**
-     * Reads a yes/no response.
-     *
-     * @param prompt question
-     * @return true for yes, false for no
-     */
+    // Opsiyonel telefon
+    public static String readOptionalPhone(String prompt)
+    {
+        if (!PHONE_GUIDANCE_SHOWN)
+        {
+            System.out.println("\nPhone number input guidance:");
+            System.out.println("- Enter a realistic phone number with digits only, optionally starting with '+' and using spaces or dashes.");
+            System.out.println("  Examples of accepted formats:");
+            System.out.println("    05551234567");
+            System.out.println("    5551234567");
+            System.out.println("    +905551234567");
+            System.out.println("    +90 555 123 45 67");
+            System.out.println("- Common mistakes:");
+            System.out.println("  * Too few digits or too many digits (we expect about 10–15 digits in total).");
+            System.out.println("  * Using letters instead of digits.");
+            System.out.println("  * Repeating the same digit many times (e.g., 0000000000).");
+            System.out.println("- If the system rejects your phone number, check the length and characters, then try again.\n");
+            PHONE_GUIDANCE_SHOWN = true;
+        }
+
+        while (true)
+        {
+            System.out.print(prompt + " (empty = skip): ");
+            String phone = SCANNER.nextLine().trim();
+
+            if (phone.isEmpty())
+            {
+                return "";
+            }
+
+            if (isValidPhone(phone))
+            {
+                return phone;
+            }
+
+            System.out.println("Invalid phone number. Please follow the guidance above and try again.");
+        }
+    }
+
+    // Evet/Hayır (y/n) soruları için
     public static boolean readYesNo(String prompt)
     {
         while (true)
@@ -278,12 +281,12 @@ public class InputHelper
             System.out.print(prompt + " (y/n): ");
             String line = SCANNER.nextLine().trim().toLowerCase();
 
-            if (line.matches("y|yes|e|evet"))
+            if (line.equals("y") || line.equals("yes") || line.equals("e") || line.equals("evet"))
             {
                 return true;
             }
 
-            if (line.matches("n|no|h|hayir|hayır"))
+            if (line.equals("n") || line.equals("no") || line.equals("h") || line.equals("hayir") || line.equals("hayır"))
             {
                 return false;
             }
@@ -292,12 +295,7 @@ public class InputHelper
         }
     }
 
-    /**
-     * Reads a Role enum value.
-     *
-     * @param prompt input prompt
-     * @return Role constant
-     */
+    // Role okuma: yanlış girerse tekrar sor
     public static Role readRole(String prompt)
     {
         while (true)
@@ -317,12 +315,12 @@ public class InputHelper
             }
             catch (IllegalArgumentException e)
             {
-                System.out.println("Invalid role. Try again.");
+                System.out.println("Invalid role. Please enter one of: TESTER, JUNIOR_DEV, SENIOR_DEV, MANAGER.");
             }
         }
     }
 
-    // Validation helpers
+    // ------------------- PRIVATE HELPERS -------------------
 
     private static boolean isValidEmail(String email)
     {
@@ -330,9 +328,31 @@ public class InputHelper
         return Pattern.matches(regex, email);
     }
 
+    // Telefon: izin verilen karakterler + gerçekçi uzunluk kontrolü
     private static boolean isValidPhone(String phone)
     {
+        // Karakter setini kontrol et (sadece rakam, boşluk, +, -, parantez)
         String regex = "^[0-9\\s+\\-()]{5,25}$";
-        return Pattern.matches(regex, phone);
+        if (!Pattern.matches(regex, phone))
+        {
+            return false;
+        }
+
+        return isRealisticPhone(phone);
+    }
+
+    // Gerçekçi telefon: 10–15 rakam, hepsi aynı rakam olmasın
+    private static boolean isRealisticPhone(String phone)
+    {
+        // Sadece rakamları çıkar
+        String digits = phone.replaceAll("[^0-9]", "");
+
+        // Çok kısa veya çok uzun numaraları reddet
+        if (digits.length() < 10 || digits.length() > 15)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
