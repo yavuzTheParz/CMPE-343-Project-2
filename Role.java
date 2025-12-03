@@ -1,4 +1,5 @@
 // File: Role.java
+<<<<<<< HEAD
 
 /**
  * Represents the available user roles within the system.
@@ -16,5 +17,12 @@ public enum Role
     SENIOR_DEV,
 
     /** Role for managerial users with the highest access level. */
+=======
+public enum Role
+{
+    TESTER,
+    JUNIOR_DEV,
+    SENIOR_DEV,
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     MANAGER
 }

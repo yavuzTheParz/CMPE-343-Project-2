@@ -1,0 +1,361 @@
+// File: TesterMenu.java
+import java.util.List;
+
+/**
+ * This class provides the main menu interface for users with the TESTER role.
+ * It includes read-only capabilities such as Listing, Searching, and Sorting contacts.
+ */
+public class TesterMenu
+{
+    /**
+     * Starts the Tester menu loop. Displays options and executes
+     * the selected operations until the user chooses to "Logout" (0).
+     */
+    public static void start()
+    {
+        while (true)
+        {
+            System.out.println("\n=== TESTER MENU ===");
+            System.out.println("1) List Contacts");
+            System.out.println("2) Search Contacts");
+            System.out.println("3) Sort Contacts");
+            System.out.println("0) Logout");
+
+            int choice = InputHelper.readInt("Choice: ");
+
+            switch (choice)
+            {
+                case 1:
+                    listContacts();
+                    break;
+
+                case 2:
+                    searchContacts();
+                    break;
+
+                case 3:
+                    sortContacts();
+                    break;
+
+                case 0:
+                    Session.clear();
+                    return;
+
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    /**
+     * Retrieves all contacts from the database and prints them to the console.
+     * Displays ID, name, nickname, primary phone, and email.
+     */
+    protected static void listContacts()
+    {
+        List<Contact> contacts = ContactDAO.getAllContacts();
+
+        if (contacts.isEmpty())
+        {
+            System.out.println("No contacts found.");
+            return;
+        }
+
+        // Sütun genişlikleri
+        int W_ID       = 4;
+        int W_NAME     = 20;
+        int W_NICK     = 15;
+        int W_PRIMARY  = 15;
+        int W_SECOND   = 15;
+        int W_EMAIL    = 25;
+        int W_LINKEDIN = 30;
+
+        System.out.println("\n--- CONTACT LIST ---\n");
+
+        // HEADER
+        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+            pad("ID",        W_ID),
+            pad("Name",      W_NAME),
+            pad("Nickname",  W_NICK),
+            pad("Primary",   W_PRIMARY),
+            pad("Secondary", W_SECOND),
+            pad("Email",     W_EMAIL),
+            pad("LinkedIn",  W_LINKEDIN)
+        );
+
+        System.out.println("-".repeat(
+            W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
+        ));
+
+        // ROWS
+        for (Contact c : contacts)
+        {
+            String fullName = c.getFirstName() + " " + c.getLastName();
+
+            System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+                pad(String.valueOf(c.getContactId()), W_ID),
+                pad(fullName,                        W_NAME),
+                pad(c.getNickname(),                 W_NICK),
+                pad(c.getPhonePrimary(),             W_PRIMARY),
+                pad(c.getPhoneSecondary(),           W_SECOND),
+                pad(c.getEmail(),                    W_EMAIL),
+                pad(c.getLinkedinUrl(),              W_LINKEDIN)
+            );
+        }
+    }
+
+
+    private static String pad(String text, int width)
+    {
+        if (text == null)
+            text = "-";
+
+        if (text.length() > width)
+            return text.substring(0, width);
+
+        return String.format("%-" + width + "s", text);
+    }
+
+
+
+    /**
+     * Allows the user to search through contacts based on selected criteria.
+     * Offers single-field and multi-field search options (e.g., phone, email, nickname).
+     * Displays matching results or a message if no contacts are found.
+     */
+    protected static void searchContacts()
+    {
+        System.out.println("\n--- SEARCH CONTACTS ---");
+
+        // Guidance for the user regarding input format and search behavior
+        System.out.println("Input guidance:");
+        System.out.println("- All text searches are CASE-INSENSITIVE and use SUBSTRING matching.");
+        System.out.println("  For example, phone search '55' will match any phone number containing '55'.");
+        System.out.println("- Phone and e-mail searches accept partial values (e.g., 'yah' in e-mail).");
+        System.out.println("- If you make a mistake, simply run the search again with corrected input.\n");
+
+        System.out.println("Single-field searches:");
+        System.out.println("1) By phone (primary, substring match)");
+        System.out.println("2) By e-mail (substring match)");
+        System.out.println("3) By nickname (substring match)");
+
+        System.out.println("Multi-field searches:");
+        System.out.println("4) Phone contains X AND e-mail contains Y");
+        System.out.println("5) Nickname contains X AND e-mail contains Y");
+        System.out.println("6) First name equals X AND birth month is Y (1-12)");
+
+        System.out.println("0) Back to menu");
+
+        int option = InputHelper.readInt("Option: ");
+
+        if (option == 0)
+        {
+            return;
+        }
+
+        List<Contact> all = ContactDAO.getAllContacts();
+        List<Contact> result = null;
+
+        switch (option)
+        {
+            case 1:
+            {
+                String q = InputHelper.readNonEmptyString("Phone contains: ");
+                result = ContactSearch.searchByPhone(all, q);
+                break;
+            }
+            case 2:
+            {
+                String q = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByEmail(all, q);
+                break;
+            }
+            case 3:
+            {
+                String q = InputHelper.readNonEmptyString("Nickname contains: ");
+                result = ContactSearch.searchByNickname(all, q);
+                break;
+            }
+            case 4:
+            {
+                String phoneSub = InputHelper.readNonEmptyString("Phone contains: ");
+                String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByPhoneAndEmail(all, phoneSub, emailSub);
+                break;
+            }
+            case 5:
+            {
+                String nickSub = InputHelper.readNonEmptyString("Nickname contains: ");
+                String emailSub = InputHelper.readNonEmptyString("E-mail contains: ");
+                result = ContactSearch.searchByNicknameAndEmail(all, nickSub, emailSub);
+                break;
+            }
+            case 6:
+            {
+                String firstNameExact = InputHelper.readNonEmptyString("First name (exact match): ");
+                int month = InputHelper.readIntInRange("Birth month", 1, 12);
+                result = ContactSearch.searchByFirstNameAndBirthMonth(all, firstNameExact, month);
+                break;
+            }
+            default:
+                System.out.println("Invalid option.");
+                return;
+        }
+
+        if (result == null || result.isEmpty())
+        {
+            System.out.println("No matching contacts found.");
+            return;
+        }
+
+        if (result == null || result.isEmpty())
+        {
+            System.out.println("No matching contacts found.");
+            return;
+        }
+
+        System.out.println("\n--- SEARCH RESULTS ---\n");
+
+        // Sütun genişlikleri (listContacts ile aynı)
+        int W_ID       = 4;
+        int W_NAME     = 20;
+        int W_NICK     = 15;
+        int W_PRIMARY  = 15;
+        int W_SECOND   = 15;
+        int W_EMAIL    = 25;
+        int W_LINKEDIN = 30;
+
+        // HEADER
+        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+            pad("ID",        W_ID),
+            pad("Name",      W_NAME),
+            pad("Nickname",  W_NICK),
+            pad("Primary",   W_PRIMARY),
+            pad("Secondary", W_SECOND),
+            pad("Email",     W_EMAIL),
+            pad("LinkedIn",  W_LINKEDIN)
+        );
+
+        // SEPARATOR
+        System.out.println("-".repeat(
+            W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
+        ));
+
+        // ROWS
+        for (Contact c : result)
+        {
+            String fullName = c.getFirstName() + " " + c.getLastName();
+
+            String secondaryPhone = (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
+                ? "-"
+                : c.getPhoneSecondary();
+
+            String linkedin = (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
+                ? "-"
+                : c.getLinkedinUrl();
+
+            System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+                pad(String.valueOf(c.getContactId()), W_ID),
+                pad(fullName,                        W_NAME),
+                pad(c.getNickname(),                 W_NICK),
+                pad(c.getPhonePrimary(),             W_PRIMARY),
+                pad(secondaryPhone,                  W_SECOND),
+                pad(c.getEmail(),                    W_EMAIL),
+                pad(linkedin,                        W_LINKEDIN)
+            );
+        }
+
+
+    }
+
+    /**
+     * Sorts all contacts based on a user-selected field (Name, Last Name, Birth Date)
+     * and order (Ascending/Descending), then displays the sorted list.
+     */
+    protected static void sortContacts()
+{
+    System.out.println("\n--- SORT CONTACTS ---");
+    System.out.println("1) By first name");
+    System.out.println("2) By last name");
+    System.out.println("3) By birth date");
+    int fieldOpt = InputHelper.readInt("Field: ");
+
+    System.out.println("Order: 1) Ascending  2) Descending");
+    int orderOpt = InputHelper.readInt("Order: ");
+
+    ContactSorter.SortField field;
+
+    switch (fieldOpt)
+    {
+        case 1:
+            field = ContactSorter.SortField.FIRST_NAME;
+            break;
+        case 2:
+            field = ContactSorter.SortField.LAST_NAME;
+            break;
+        case 3:
+            field = ContactSorter.SortField.BIRTH_DATE;
+            break;
+        default:
+            System.out.println("Invalid field.");
+            return;
+    }
+
+    boolean ascending = (orderOpt == 1);
+
+    List<Contact> contacts = ContactDAO.getAllContacts();
+    ContactSorter.sort(contacts, field, ascending);
+
+    // Sütun genişlikleri
+    int W_ID       = 4;
+    int W_NAME     = 20;
+    int W_NICK     = 15;
+    int W_PRIMARY  = 15;
+    int W_SECOND   = 15;
+    int W_EMAIL    = 25;
+    int W_LINKEDIN = 30;
+
+    System.out.println("\n--- SORTED CONTACT LIST ---\n");
+
+    // HEADER
+    System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+        pad("ID",        W_ID),
+        pad("Name",      W_NAME),
+        pad("Nickname",  W_NICK),
+        pad("Primary",   W_PRIMARY),
+        pad("Secondary", W_SECOND),
+        pad("Email",     W_EMAIL),
+        pad("LinkedIn",  W_LINKEDIN)
+    );
+
+    System.out.println("-".repeat(
+        W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
+    ));
+
+    // ROWS
+    for (Contact c : contacts)
+    {
+        String fullName = c.getFirstName() + " " + c.getLastName();
+
+        String secondaryPhone = (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
+            ? "-"
+            : c.getPhoneSecondary();
+
+        String linkedin = (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
+            ? "-"
+            : c.getLinkedinUrl();
+
+        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
+            pad(String.valueOf(c.getContactId()), W_ID),
+            pad(fullName,                        W_NAME),
+            pad(c.getNickname(),                 W_NICK),
+            pad(c.getPhonePrimary(),             W_PRIMARY),
+            pad(secondaryPhone,                  W_SECOND),
+            pad(c.getEmail(),                    W_EMAIL),
+            pad(linkedin,                        W_LINKEDIN)
+        );
+    }
+}
+
+
+}

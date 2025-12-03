@@ -1,5 +1,6 @@
 // File: RoleRouter.java
 
+<<<<<<< HEAD
 /**
  * Routes the currently logged-in user to the correct menu
  * based on their assigned {@link Role}. This class centralizes
@@ -12,6 +13,10 @@ public class RoleRouter
      * Starts the routing process by checking the current user's role
      * and opening the corresponding menu.
      */
+=======
+public class RoleRouter
+{
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     public static void start()
     {
         User user = Session.getCurrentUser();

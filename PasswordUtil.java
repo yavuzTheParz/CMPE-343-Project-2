@@ -1,4 +1,5 @@
 // File: PasswordUtil.java
+<<<<<<< HEAD
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +19,14 @@ public class PasswordUtil
      * @return SHA-256 hashed value of the input as a hex string
      * @throws RuntimeException if SHA-256 is not supported on the system
      */
+=======
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+
+public class PasswordUtil
+{
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     public static String hashPassword(String plainText)
     {
         try
