@@ -1,22 +1,10 @@
-// File: TesterUser.java
-
 /**
- * Represents a user with the {@link Role#TESTER} role.
- * <p>
- * Testers have read-only access to the system (list, search, sort)
- * and cannot modify contact information.
- * </p>
+ * User type representing a tester with read-only permissions.
  */
 public class TesterUser extends User
 {
     /**
-     * Creates a new TesterUser with the specified account information.
-     *
-     * @param userId       unique identifier of the user
-     * @param username     login username
-     * @param passwordHash hashed password
-     * @param name         first name of the user
-     * @param surname      last name of the user
+     * Creates a TesterUser with the given account information.
      */
     public TesterUser(int userId,
                       String username,
@@ -28,8 +16,7 @@ public class TesterUser extends User
     }
 
     /**
-     * Opens the menu interface for the tester user.
-     * Delegates control to {@link TesterMenu#start()}.
+     * Opens the tester menu.
      */
     @Override
     public void openMenu()
