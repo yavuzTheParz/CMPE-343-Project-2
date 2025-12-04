@@ -2,6 +2,12 @@ import java.util.*;
 
 public class asciiAnimator
 {
+  /**
+ * Utility class responsible for rendering ASCII-based animations
+ * in the console, including the opening animation and a disco ball effect.
+ * All methods are static and intended to be used without creating an instance.
+ */
+
 
     private static final String HOME       = "\u001B[H";
     private static final String HIDE_CURSOR= "\u001B[?25l";
@@ -16,6 +22,12 @@ public class asciiAnimator
     private static final String CLEAR = "\033[H\033[2J";
 
 
+
+      /**
+     * Plays the main opening animation sequence in the console.
+     * The animation iterates over a list of pre-defined ASCII frames
+     * and displays them with a fixed frame rate.
+     */
     public static void playOpeningAnimation()
     {
         List<String> frames = getFrames();
@@ -26,7 +38,7 @@ public class asciiAnimator
         
         try 
         {
-            //Hide the cursor, make the color red
+
             System.out.print(HIDE_CURSOR);
             System.out.print(ANSI_RED);
 
@@ -40,7 +52,7 @@ public class asciiAnimator
                 if(i == 24)
                     System.out.print(ANSI_RESET);
 
-                //print the frame
+
                 System.out.print(frame);
                 System.out.flush();
 
@@ -50,20 +62,21 @@ public class asciiAnimator
                     Thread.sleep(sleepMs);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break; // break from the animation
+                    break; 
+
                 }
                 i++;
 
             }
 
-                // Animation is over
+
                 System.out.print(ANSI_RESET);
                 System.out.print(SHOW_CURSOR);
                 System.out.println("by:  Yavuz Selim Yaşar, Volkan Dinç,  Kemal Ege İncereis,  İdil Zeren Çoban");
             } 
             finally
             {
-                // Clean the terminal no matter what
+
                 System.out.print(ANSI_RESET);
                 System.out.print(SHOW_CURSOR);
                 System.out.flush();
@@ -71,7 +84,10 @@ public class asciiAnimator
             discoball();
     }
 
-
+     /**
+     * Displays an ASCII-art disco ball on the console.
+     * This method is used at the end of the animation as a final visual effect.
+     */
 
     public static void discoball() 
     {
@@ -129,29 +145,29 @@ public class asciiAnimator
 "                                                       LEADER: YAVUZ SELİM YAŞAR                                                         "
         };
 
-        // İsimler (istediğin gibi değiştir)
         String[] NAMES = { "Kemal Ege İncereis", "Volkan Dinç", "İdil Zeren Çoban" };
 
         int[][] COLORS = new int[][]
         {
-            {255,   0, 255},   // mor
-            {0,   255, 255},   // camgöbeği
-            {255, 255,   0},   // sarı
-            {0,   255, 128},   // yeşil
-            {255, 105, 180},   // pembe
-            {0,   128, 255}    // mavi
+
+            {255,   0, 255},  
+            {0,   255, 255},   
+            {255, 255,   0},   
+            {0,   255, 128},   
+            {255, 105, 180},   
+            {0,   128, 255}    
+
         };
 
         int width = BALL[0].length();
 
-        // Sütun renk index'leri (top + isim satırı aynı akışı kullanıyor)
+
         int[] colColorIndex = new int[width];
         for (int col = 0; col < width; col++)
         {
             colColorIndex[col] = col % COLORS.length;
         }
 
-        // Kayacak isim satırının pattern'i
         StringBuilder patternBuilder = new StringBuilder();
         patternBuilder.append("   ");
         for (int i = 0; i < NAMES.length; i++)
@@ -160,7 +176,6 @@ public class asciiAnimator
         }
         String basePattern = patternBuilder.toString();
 
-        // Genişliği rahatça doldursun diye uzat
         StringBuilder longPattern = new StringBuilder(basePattern);
         while (longPattern.length() < width * 3)
         {
@@ -173,7 +188,6 @@ public class asciiAnimator
         {
             StringBuilder frame = new StringBuilder();
 
-            // TOP
             for (int row = 0; row < BALL.length; row++)
             {
                 String line = BALL[row];
@@ -211,7 +225,11 @@ public class asciiAnimator
             }
 
 
+<<<<<<< HEAD
+            
+=======
             // ALTTA KAYAN İSİM SATIRI
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
             for (int col = 0; col < width; col++)
             {
                 int idx = colColorIndex[col];
@@ -242,11 +260,12 @@ public class asciiAnimator
                 .append(ANSI_RESET)
                 .append('\n');
 
-            // Tek seferde bas
+            
             System.out.print(CLEAR);
             System.out.print(frame.toString());
 
-            // Renk akışını sola kaydır
+            
+
             int firstColor = colColorIndex[0];
             for (int i = 0; i < width - 1; i++)
             {
@@ -254,7 +273,6 @@ public class asciiAnimator
             }
             colColorIndex[width - 1] = firstColor;
 
-            // İsim pattern'ini de sola kaydır (soldan çıkan sağdan geri gelsin)
             nameOffset = (nameOffset + 1) % namePattern.length();
 
             try {
@@ -282,6 +300,12 @@ public class asciiAnimator
 
 
 
+      /**
+     * Builds and returns the list of ASCII frames used in the opening animation.
+     * Each element in the list represents a single frame of the animation.
+     *
+     * @return a list of strings where each string is one ASCII-art frame.
+     */
     private static List<String> getFrames() 
     {    
         String f[] = new String[] {
@@ -1594,4 +1618,9 @@ public class asciiAnimator
         
     
 
+<<<<<<< HEAD
 }
+
+=======
+}
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22

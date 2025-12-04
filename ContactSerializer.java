@@ -1,8 +1,30 @@
 // File: ContactSerializer.java
 import java.time.LocalDate;
 
+<<<<<<< HEAD
+/**
+ * Utility class responsible for converting {@link Contact} objects
+ * to serialized string formats and reconstructing them back into Contact
+ * instances. This class provides simple pipe-delimited serialization.
+ */
 public class ContactSerializer
 {
+    /**
+     * Serializes a Contact object into a pipe-separated string format.
+     * Null fields are converted into empty values to preserve structure.
+     *
+     * Format:
+     * contactId|firstName|middleName|lastName|nickname|phonePrimary|
+     * phoneSecondary|email|linkedinUrl|birthDate
+     *
+     * @param c the Contact object to serialize
+     * @return a pipe-delimited string representation of the contact,
+     *         or null if the input is null
+     */
+=======
+public class ContactSerializer
+{
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     public static String serialize(Contact c)
     {
         if (c == null)
@@ -29,6 +51,16 @@ public class ContactSerializer
         return sb.toString();
     }
 
+<<<<<<< HEAD
+    /**
+     * Deserializes a pipe-separated string back into a Contact object.
+     * Empty values are interpreted as null where appropriate.
+     *
+     * @param str the serialized contact string
+     * @return a reconstructed Contact object, or null if the input is null/empty
+     */
+=======
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     public static Contact deserialize(String str)
     {
         if (str == null || str.isEmpty())
@@ -36,7 +68,11 @@ public class ContactSerializer
             return null;
         }
 
+<<<<<<< HEAD
+        String[] parts = str.split("\\|", -1); // keep empty values
+=======
         String[] parts = str.split("\\|", -1); // empty'leri de koru
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
 
         int idx = 0;
         int contactId = Integer.parseInt(parts[idx++]);
@@ -69,11 +105,31 @@ public class ContactSerializer
         );
     }
 
+<<<<<<< HEAD
+    /**
+     * Converts a null string into an empty string.
+     * Used to maintain consistent serialization formatting.
+     *
+     * @param s the input string
+     * @return an empty string if input is null; otherwise the same string
+     */
+=======
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     private static String nullToEmpty(String s)
     {
         return (s == null) ? "" : s;
     }
 
+<<<<<<< HEAD
+    /**
+     * Converts an empty string into null.
+     * Used during deserialization to restore original null values.
+     *
+     * @param s the input string
+     * @return null if the string is empty or null; otherwise the same string
+     */
+=======
+>>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     private static String emptyToNull(String s)
     {
         return (s == null || s.isEmpty()) ? null : s;

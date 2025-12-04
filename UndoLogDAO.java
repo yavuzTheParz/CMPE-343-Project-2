@@ -4,10 +4,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Data Access Object responsible for writing and retrieving undo log entries.
+ * <p>
+ * This class stores snapshot data for {@link Contact} and {@link User}
+ * to support revert operations through {@link UndoService}.
+ * </p>
+ */
 public class UndoLogDAO
 {
-    // ------- CONTACT LOGGING -------
+    // ========================= CONTACT LOGGING =========================
 
+    /**
+     * Writes an undo log entry for a contact-related operation.
+     *
+     * @param opType     the type of operation (INSERT, UPDATE, DELETE)
+     * @param oldContact the previous state of the contact (null for INSERT)
+     * @param newContact the new state of the contact (null for DELETE)
+     */
     public static void logContactOperation(UndoOperationType opType,
                                            Contact oldContact,
                                            Contact newContact)
@@ -30,6 +44,7 @@ public class UndoLogDAO
         String oldData = ContactSerializer.serialize(oldContact);
         String newData = ContactSerializer.serialize(newContact);
 
+        // Username of the user who performed the operation
         String createdBy = null;
         User current = Session.getCurrentUser();
         if (current != null)
@@ -37,9 +52,10 @@ public class UndoLogDAO
             createdBy = current.getUsername();
         }
 
-        String sql = "INSERT INTO undo_log " +
-                     "(entity_type, operation_type, entity_id, old_data, new_data, created_by) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql =
+            "INSERT INTO undo_log " +
+            "(entity_type, operation_type, entity_id, old_data, new_data, created_by) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql))
@@ -59,8 +75,15 @@ public class UndoLogDAO
         }
     }
 
-    // ------- USER LOGGING -------
+    // ========================= USER LOGGING =========================
 
+    /**
+     * Writes an undo log entry for a user-related operation.
+     *
+     * @param opType  the type of operation performed
+     * @param oldUser previous state (null for INSERT)
+     * @param newUser new state (null for DELETE)
+     */
     public static void logUserOperation(UndoOperationType opType,
                                         User oldUser,
                                         User newUser)
@@ -83,6 +106,7 @@ public class UndoLogDAO
         String oldData = UserSerializer.serialize(oldUser);
         String newData = UserSerializer.serialize(newUser);
 
+        // Username of the user who performed the operation
         String createdBy = null;
         User current = Session.getCurrentUser();
         if (current != null)
@@ -90,9 +114,10 @@ public class UndoLogDAO
             createdBy = current.getUsername();
         }
 
-        String sql = "INSERT INTO undo_log " +
-                     "(entity_type, operation_type, entity_id, old_data, new_data, created_by) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql =
+            "INSERT INTO undo_log " +
+            "(entity_type, operation_type, entity_id, old_data, new_data, created_by) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql))
@@ -112,12 +137,22 @@ public class UndoLogDAO
         }
     }
 
-    // ------- LAST ENTRY + DELETE -------
+    // ========================= LAST ENTRY + DELETE =========================
 
+    /**
+     * Retrieves the last undo log entry from the database and removes it.
+     * <p>
+     * This method is used by the undo mechanism to revert the most recent
+     * change and maintain the integrity of the undo stack.
+     * </p>
+     *
+     * @return the last undo log entry, or {@code null} if the log is empty
+     */
     public static UndoLogEntry getLastEntryAndDelete()
     {
-        String selectSql = "SELECT undo_id, entity_type, operation_type, entity_id, old_data, new_data, created_by " +
-                           "FROM undo_log ORDER BY undo_id DESC LIMIT 1";
+        String selectSql =
+            "SELECT undo_id, entity_type, operation_type, entity_id, old_data, new_data, created_by " +
+            "FROM undo_log ORDER BY undo_id DESC LIMIT 1";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement psSelect = conn.prepareStatement(selectSql);
@@ -139,7 +174,7 @@ public class UndoLogDAO
             EntityType entityType = EntityType.valueOf(entityTypeStr);
             UndoOperationType opType = UndoOperationType.valueOf(opTypeStr);
 
-            // Önce log kaydını sil
+            // Delete the log entry after reading it
             String deleteSql = "DELETE FROM undo_log WHERE undo_id = ?";
 
             try (PreparedStatement psDelete = conn.prepareStatement(deleteSql))
