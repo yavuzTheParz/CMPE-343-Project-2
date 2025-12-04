@@ -82,6 +82,7 @@ public class ManagerMenu
 
                 case 0:
                     Session.clear();
+                    asciiAnimator.playClosingAnimation();
                     System.out.println(GREEN + "Logged out." + RESET);
                     return;
 
@@ -309,6 +310,7 @@ public class ManagerMenu
      * Retrieves all users from the database and prints them to the console.
      * Displays User ID, username, name, surname, and role.
      */
+    //todo fix output
     private static void listUsers()
     {
         System.out.println("\n--- USER LIST ---");

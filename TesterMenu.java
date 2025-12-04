@@ -74,6 +74,7 @@ public class TesterMenu
 
                 case 0:
                     Session.clear();
+                    asciiAnimator.playClosingAnimation();
                     System.out.println(GREEN + "Logged out." + RESET);
                     return;
 
@@ -379,86 +380,97 @@ public class TesterMenu
 
     }
     /**
- * Allows the currently logged-in TESTER user to change their own password.
- * Verifies the current password first, then asks for a new password twice.
- */
-protected static void changePassword()
-{
-    User current = Session.getCurrentUser();
-
-    if (current == null)
+     * Allows the currently logged-in TESTER user to change their own password.
+     * Verifies the current password first, then asks for a new password twice.
+     */
+    protected static void changePassword()
     {
-        System.out.println("No active session. Please log in again.");
-        return;
+        User current = Session.getCurrentUser();
 
-    }
-
-    System.out.println("\n--- CHANGE PASSWORD ---");
-
-    // 1) Eski şifreyi doğrula
-    String oldPassword = InputHelper.readNonEmptyString("Current password: ");
-
-    User verified = null;
-    try
-    {
-        verified = UserDAO.authenticate(current.getUsername(), oldPassword);
-    }
-    catch (Exception e)
-    {
-        System.out.println("An unexpected error occurred while verifying password.");
-        System.out.println("Please contact your system administrator.");
-        e.printStackTrace();
-        return;
-    }
-
-    if (verified == null)
-    {
-        System.out.println("Current password is incorrect.");
-        return;
-    }
-
-    // 2) Yeni şifreyi iste (iki kez)
-    String newPassword;
-    while (true)
-    {
-        newPassword = InputHelper.readNonEmptyString("New password: ");
-        String confirm = InputHelper.readNonEmptyString("Confirm new password: ");
-
-        if (!newPassword.equals(confirm))
+        if (current == null)
         {
-            System.out.println("Passwords do not match. Please try again.\n");
-            continue;
+            System.out.println("No active session. Please log in again.");
+            InputHelper.waitForEnter();
+            return;
         }
 
-        if (newPassword.length() < 6)
+        System.out.println("\n--- CHANGE PASSWORD ---");
+
+        String oldPassword = InputHelper.readNonEmptyString("Current password: ");
+
+        User verified = null;
+        try
         {
-            System.out.println("Password must be at least 6 characters long.\n");
-            continue;
+            verified = UserDAO.authenticate(current.getUsername(), oldPassword);
+        }
+        catch (Exception e)
+        {
+            System.out.println("An unexpected error occurred while verifying password.");
+            System.out.println("Please contact your system administrator.");
+            e.printStackTrace();
+            return;
         }
 
-        break;
-    }
+        if (verified == null)
+        {
+            System.out.println("Current password is incorrect.");
+            return;
+        }
 
-    boolean ok;
-    try
-    {
+        String newPassword;
+        while (true)
+        {
+            newPassword = InputHelper.readNonEmptyString("New password: ");
+            String confirm = InputHelper.readNonEmptyString("Confirm new password: ");
 
-        ok = UserDAO.updatePassword(current.getUserId(), newPassword);
-    }
-    catch (Exception e)
-    {
-        System.out.println("An unexpected error occurred while updating the password.");
-        e.printStackTrace();
-        return;
-    }
+            if (!newPassword.equals(confirm))
+            {
+                System.out.println("Passwords do not match. Please try again.\n");
+                continue;
+            }
 
-    if (ok)
-    {
-        System.out.println("Password successfully updated.");
-    }
-    else
-    {
-        System.out.println("Failed to update password.");
+
+            break;
+        }
+
+
+        User updated = UserFactory.createUser(
+            current.getUserId(),
+            current.getUsername(),
+            current.getPasswordHash(), 
+            current.getName(),
+            current.getSurname(),
+            current.getRole()
+        );
+
+        boolean ok;
+        try
+        {
+            ok = UserDAO.updateUser(updated, true, newPassword);
+        }
+        catch (Exception e)
+        {
+            System.out.println("An unexpected error occurred while updating the password.");
+            e.printStackTrace();
+            return;
+        }
+
+        if (ok)
+        {
+            // Session'daki user'ı da tazeleyelim (hash vs. güncellensin)
+            User refreshed = UserDAO.getUserById(current.getUserId());
+            if (refreshed != null)
+            {
+                Session.setCurrentUser(refreshed);
+            }
+
+            System.out.println("Password successfully updated.");
+        }
+        else
+        {
+            System.out.println("Failed to update password.");
+        }
+        InputHelper.waitForEnter();
     }
 
 }

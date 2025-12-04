@@ -1,5 +1,4 @@
 // File: JuniorDevUser.java
-<<<<<<< HEAD
 
 /**
  * Represents a user with the JUNIOR_DEV role. This class extends the {@link User}
@@ -19,10 +18,6 @@ public class JuniorDevUser extends User
      * @param name         the first name of the user
      * @param surname      the last name of the user
      */
-=======
-public class JuniorDevUser extends User
-{
->>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     public JuniorDevUser(int userId,
                          String username,
                          String passwordHash,
@@ -32,13 +27,10 @@ public class JuniorDevUser extends User
         super(userId, username, passwordHash, name, surname, Role.JUNIOR_DEV);
     }
 
-<<<<<<< HEAD
     /**
      * Opens the menu interface specific to junior developers.
      * This method overrides the abstract or inherited method from {@link User}.
      */
-=======
->>>>>>> 9782e30fac3495bab4c37e2194c8516f6621ae22
     @Override
     public void openMenu()
     {

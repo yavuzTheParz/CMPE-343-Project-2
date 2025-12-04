@@ -76,6 +76,7 @@ public class JuniorDevMenu extends TesterMenu
 
             case 0:
                 Session.clear();
+                asciiAnimator.playClosingAnimation();
                 System.out.println(ORANGE + "Logged out." + RESET);
                 return;
 

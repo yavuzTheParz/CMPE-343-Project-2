@@ -85,6 +85,7 @@ public class SeniorDevMenu extends JuniorDevMenu
 
                 case 0:
                     Session.clear();
+                    asciiAnimator.playClosingAnimation();
                     System.out.println(PURPLE + "Logged out." + RESET);
                     return;
 
