@@ -8,6 +8,7 @@ public class UndoService
         if (entry == null)
         {
             System.out.println("Nothing to undo.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -68,6 +69,7 @@ public class UndoService
         {
             System.out.println("Failed to undo INSERT contact.");
         }
+        InputHelper.waitForEnter();
     }
 
     private static void undoDeleteContact(UndoLogEntry entry)
@@ -76,6 +78,7 @@ public class UndoService
         if (oldContact == null)
         {
             System.out.println("No old contact data to restore.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -89,6 +92,7 @@ public class UndoService
         {
             System.out.println("Failed to undo DELETE contact.");
         }
+        InputHelper.waitForEnter();
     }
 
     private static void undoUpdateContact(UndoLogEntry entry)
@@ -97,6 +101,7 @@ public class UndoService
         if (oldContact == null)
         {
             System.out.println("No old contact data to restore.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -110,6 +115,7 @@ public class UndoService
         {
             System.out.println("Failed to undo UPDATE contact.");
         }
+        InputHelper.waitForEnter();
     }
 
     // -------- USER UNDO --------
@@ -147,6 +153,7 @@ public class UndoService
         {
             System.out.println("Failed to undo INSERT user.");
         }
+        InputHelper.waitForEnter();
     }
 
     private static void undoDeleteUser(UndoLogEntry entry)
@@ -154,6 +161,7 @@ public class UndoService
         User oldUser = UserSerializer.deserialize(entry.getOldData());
         if (oldUser == null)
         {
+            InputHelper.waitForEnter();
             System.out.println("No old user data to restore.");
             return;
         }
@@ -168,6 +176,7 @@ public class UndoService
         {
             System.out.println("Failed to undo DELETE user.");
         }
+        InputHelper.waitForEnter();
     }
 
     private static void undoUpdateUser(UndoLogEntry entry)
@@ -175,6 +184,7 @@ public class UndoService
         User oldUser = UserSerializer.deserialize(entry.getOldData());
         if (oldUser == null)
         {
+            InputHelper.waitForEnter();
             System.out.println("No old user data to restore.");
             return;
         }
@@ -189,5 +199,6 @@ public class UndoService
         {
             System.out.println("Failed to undo UPDATE user.");
         }
+        InputHelper.waitForEnter();
     }
 }

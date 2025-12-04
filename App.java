@@ -23,6 +23,9 @@ public class App
     {
         asciiAnimator.playOpeningAnimation();
 
+        System.out.print("\u001B[H\u001B[2J");
+
+
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.start();
 

@@ -1,5 +1,4 @@
 // File: JuniorDevMenu.java
-import java.util.List;
 import java.time.LocalDate;
 
 /**
@@ -9,55 +8,83 @@ import java.time.LocalDate;
  */
 public class JuniorDevMenu extends TesterMenu
 {
+
+    private static final String RESET  = "\u001B[0m";
+    private static final String ORANGE = "\u001B[38;2;255;180;80m";
+    private static final String YELLOW = "\u001B[38;2;255;220;0m";
+    private static final String BLUE   = "\u001B[38;2;100;180;255m";
+    private static final String RED    = "\u001B[38;2;255;80;80m";
+    private static final String WHITE  = "\u001B[38;2;255;255;255m";
+    private static final String BOLD   = "\u001B[1m";
+
+
     /**
      * Starts the Junior Developer menu loop. Displays options and executes
      * the selected operations until the user chooses to "Logout" (0).
      */
     public static void start()
+{
+    while (true)
     {
-        while (true)
+        System.out.println();
+
+        // Başlık kutusu
+        String title = "👶💻  JUNIOR DEV MENU";
+        int len = title.length();
+
+        String border = WHITE + "       ┌" + "─".repeat(len) + "┐" + RESET;
+        String middle = WHITE + "       │" + RESET + ORANGE + BOLD + title + RESET + WHITE + "│" + RESET;
+        String bottom = WHITE + "       └" + "─".repeat(len) + "┘" + RESET;
+
+        System.out.println(border);
+        System.out.println(middle);
+        System.out.println(bottom);
+
+        // Menü seçenek kutusu
+        System.out.println(WHITE + "┌──────────────────────────────────┐" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "1) " + RESET + "Update Contact                " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "2) " + RESET + "List Contacts                 " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "3) " + RESET + "Search Contacts               " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "4) " + RESET + "Sort Contacts                 " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "5) " + RESET + "Undo last action              " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "│ " + BLUE + "0) " + RESET + "Logout                        " + WHITE + "│" + RESET);
+        System.out.println(WHITE + "└──────────────────────────────────┘" + RESET);
+
+        int choice = InputHelper.readInt(YELLOW + "Choice: " + RESET);
+
+        switch (choice)
         {
-            System.out.println("\n=== JUNIOR DEV MENU ===");
-            System.out.println("1) Update Contact");
-            System.out.println("2) List Contacts");
-            System.out.println("3) Search Contacts");
-            System.out.println("4) Sort Contacts");
-            System.out.println("5) Undo last action");
-            System.out.println("0) Logout");
+            case 1:
+                updateContact();
+                break;
 
-            int choice = InputHelper.readInt("Choice: ");
+            case 2:
+                listContacts();
+                break;
 
-            switch (choice)
-            {
-                case 1:
-                    updateContact();
-                    break;
+            case 3:
+                searchContacts();
+                break;
 
-                case 2:
-                    listContacts();
-                    break;
+            case 4:
+                sortContacts();
+                break;
 
-                case 3:
-                    searchContacts();
-                    break;
+            case 5:
+                UndoService.undoLastOperation();
+                break;
 
-                case 4:
-                    sortContacts();
-                    break;
+            case 0:
+                Session.clear();
+                System.out.println(ORANGE + "Logged out." + RESET);
+                return;
 
-                case 5:
-                    UndoService.undoLastOperation();
-                    break;
-
-                case 0:
-                    Session.clear();
-                    return;
-
-                default:
-                    System.out.println("Invalid option.");
-            }
+            default:
+                System.out.println(RED + "Invalid option." + RESET);
         }
     }
+}
+
 
     
     /**
@@ -74,6 +101,7 @@ public class JuniorDevMenu extends TesterMenu
         if (existing == null)
         {
             System.out.println("Contact not found.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -133,6 +161,7 @@ public class JuniorDevMenu extends TesterMenu
         {
             System.out.println("Failed to update contact.");
         }
+        InputHelper.waitForEnter();
     }
 
 }

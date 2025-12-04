@@ -7,6 +7,14 @@ import java.util.List;
  */
 public class TesterMenu
 {
+
+    private static final String RESET  = "\u001B[0m";
+    private static final String CYAN   = "\u001B[38;2;0;255;255m";
+    private static final String YELLOW = "\u001B[38;2;255;255;0m";
+    private static final String GREEN  = "\u001B[38;2;0;255;128m";
+    private static final String RED    = "\u001B[38;2;255;80;80m";
+    private static final String WHITE  = "\u001B[38;2;255;255;255m";
+
     /**
      * Starts the Tester menu loop. Displays options and executes
      * the selected operations until the user chooses to "Logout" (0).
@@ -15,19 +23,37 @@ public class TesterMenu
     {
         while (true)
         {
-            System.out.println("\n=== TESTER MENU ===");
-            System.out.println("1) List Contacts");
-            System.out.println("2) Search Contacts");
-            System.out.println("3) Sort Contacts");
-            System.out.println("0) Logout");
+            System.out.println();
 
-            int choice = InputHelper.readInt("Choice: ");
+            String title = "🧪 TESTER MENU";
+            int len = title.length();
+
+            // Başlık kutusu
+            String border  = WHITE + "        ┌" + "─".repeat(len) + "┐" + RESET;
+            String middle  = WHITE + "        │" + RESET + CYAN + title + RESET + WHITE + "│" + RESET;
+            String bottom  = WHITE + "        └" + "─".repeat(len) + "┘" + RESET;
+
+            System.out.println(border);
+            System.out.println(middle);
+            System.out.println(bottom);
+
+            // Menü seçenekleri
+            System.out.println(WHITE + "┌──────────────────────────────┐" + RESET);
+            System.out.println(WHITE + "│ " + YELLOW + "1) " + RESET + "List Contacts             " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + YELLOW + "2) " + RESET + "Search Contacts           " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + YELLOW + "3) " + RESET + "Sort Contacts             " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + YELLOW + "4) " + RESET + "Change Password           " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + YELLOW + "0) " + RESET + "Logout                    " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "└──────────────────────────────┘" + RESET);
+
+            int choice = InputHelper.readInt(GREEN + "Choice: " + RESET);
 
             switch (choice)
             {
                 case 1:
                     listContacts();
                     break;
+                    
 
                 case 2:
                     searchContacts();
@@ -36,16 +62,21 @@ public class TesterMenu
                 case 3:
                     sortContacts();
                     break;
+                case 4:
+                    changePassword();
+                    break;
 
                 case 0:
                     Session.clear();
+                    System.out.println(GREEN + "Logged out." + RESET);
                     return;
 
                 default:
-                    System.out.println("Invalid option.");
+                    System.out.println(RED + "Invalid option." + RESET);
             }
         }
     }
+
 
     /**
      * Retrieves all contacts from the database and prints them to the console.
@@ -61,61 +92,10 @@ public class TesterMenu
             return;
         }
 
-        // Sütun genişlikleri
-        int W_ID       = 4;
-        int W_NAME     = 20;
-        int W_NICK     = 15;
-        int W_PRIMARY  = 15;
-        int W_SECOND   = 15;
-        int W_EMAIL    = 25;
-        int W_LINKEDIN = 30;
+        printContactsTable(contacts, "--- CONTACT LIST ---");
+        InputHelper.waitForEnter();
 
-        System.out.println("\n--- CONTACT LIST ---\n");
-
-        // HEADER
-        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-            pad("ID",        W_ID),
-            pad("Name",      W_NAME),
-            pad("Nickname",  W_NICK),
-            pad("Primary",   W_PRIMARY),
-            pad("Secondary", W_SECOND),
-            pad("Email",     W_EMAIL),
-            pad("LinkedIn",  W_LINKEDIN)
-        );
-
-        System.out.println("-".repeat(
-            W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
-        ));
-
-        // ROWS
-        for (Contact c : contacts)
-        {
-            String fullName = c.getFirstName() + " " + c.getLastName();
-
-            System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-                pad(String.valueOf(c.getContactId()), W_ID),
-                pad(fullName,                        W_NAME),
-                pad(c.getNickname(),                 W_NICK),
-                pad(c.getPhonePrimary(),             W_PRIMARY),
-                pad(c.getPhoneSecondary(),           W_SECOND),
-                pad(c.getEmail(),                    W_EMAIL),
-                pad(c.getLinkedinUrl(),              W_LINKEDIN)
-            );
-        }
     }
-
-
-    private static String pad(String text, int width)
-    {
-        if (text == null)
-            text = "-";
-
-        if (text.length() > width)
-            return text.substring(0, width);
-
-        return String.format("%-" + width + "s", text);
-    }
-
 
 
     /**
@@ -208,62 +188,8 @@ public class TesterMenu
             return;
         }
 
-        if (result == null || result.isEmpty())
-        {
-            System.out.println("No matching contacts found.");
-            return;
-        }
-
-        System.out.println("\n--- SEARCH RESULTS ---\n");
-
-        // Sütun genişlikleri (listContacts ile aynı)
-        int W_ID       = 4;
-        int W_NAME     = 20;
-        int W_NICK     = 15;
-        int W_PRIMARY  = 15;
-        int W_SECOND   = 15;
-        int W_EMAIL    = 25;
-        int W_LINKEDIN = 30;
-
-        // HEADER
-        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-            pad("ID",        W_ID),
-            pad("Name",      W_NAME),
-            pad("Nickname",  W_NICK),
-            pad("Primary",   W_PRIMARY),
-            pad("Secondary", W_SECOND),
-            pad("Email",     W_EMAIL),
-            pad("LinkedIn",  W_LINKEDIN)
-        );
-
-        // SEPARATOR
-        System.out.println("-".repeat(
-            W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
-        ));
-
-        // ROWS
-        for (Contact c : result)
-        {
-            String fullName = c.getFirstName() + " " + c.getLastName();
-
-            String secondaryPhone = (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
-                ? "-"
-                : c.getPhoneSecondary();
-
-            String linkedin = (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
-                ? "-"
-                : c.getLinkedinUrl();
-
-            System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-                pad(String.valueOf(c.getContactId()), W_ID),
-                pad(fullName,                        W_NAME),
-                pad(c.getNickname(),                 W_NICK),
-                pad(c.getPhonePrimary(),             W_PRIMARY),
-                pad(secondaryPhone,                  W_SECOND),
-                pad(c.getEmail(),                    W_EMAIL),
-                pad(linkedin,                        W_LINKEDIN)
-            );
-        }
+        printContactsTable(result, "--- SEARCH RESULT ---");
+        InputHelper.waitForEnter();
 
 
     }
@@ -273,89 +199,248 @@ public class TesterMenu
      * and order (Ascending/Descending), then displays the sorted list.
      */
     protected static void sortContacts()
-{
-    System.out.println("\n--- SORT CONTACTS ---");
-    System.out.println("1) By first name");
-    System.out.println("2) By last name");
-    System.out.println("3) By birth date");
-    int fieldOpt = InputHelper.readInt("Field: ");
-
-    System.out.println("Order: 1) Ascending  2) Descending");
-    int orderOpt = InputHelper.readInt("Order: ");
-
-    ContactSorter.SortField field;
-
-    switch (fieldOpt)
     {
-        case 1:
-            field = ContactSorter.SortField.FIRST_NAME;
-            break;
-        case 2:
-            field = ContactSorter.SortField.LAST_NAME;
-            break;
-        case 3:
-            field = ContactSorter.SortField.BIRTH_DATE;
-            break;
-        default:
-            System.out.println("Invalid field.");
+        System.out.println("\n--- SORT CONTACTS ---");
+        System.out.println("1) By first name");
+        System.out.println("2) By last name");
+        System.out.println("3) By birth date");
+        int fieldOpt = InputHelper.readInt("Field: ");
+
+        System.out.println("Order: 1) Ascending  2) Descending");
+        int orderOpt = InputHelper.readInt("Order: ");
+
+        ContactSorter.SortField field;
+
+        switch (fieldOpt)
+        {
+            case 1:
+                field = ContactSorter.SortField.FIRST_NAME;
+                break;
+            case 2:
+                field = ContactSorter.SortField.LAST_NAME;
+                break;
+            case 3:
+                field = ContactSorter.SortField.BIRTH_DATE;
+                break;
+            default:
+                System.out.println("Invalid field.");
+                return;
+        }
+
+        boolean ascending = (orderOpt == 1);
+
+        List<Contact> contacts = ContactDAO.getAllContacts();
+        ContactSorter.sort(contacts, field, ascending);
+
+        printContactsTable(contacts, "--- SORTED CONTACT LIST ---");
+        InputHelper.waitForEnter();
+    }
+
+        private static final int W_ID       = 4;
+        private static final int W_NAME     = 20;
+        private static final int W_NICK     = 15;
+        private static final int W_PRIMARY  = 15;
+        private static final int W_SECOND   = 15;
+        private static final int W_EMAIL    = 25;
+        private static final int W_LINKEDIN = 30;
+
+   private static String pad(String text, int width)
+    {
+        if (text == null)
+        {
+            text = "-";
+        }
+
+        if (text.length() > width)
+        {
+            return text.substring(0, width);
+        }
+
+        return String.format("%-" + width + "s", text);
+    }
+
+
+    private static void printContactsTable(List<Contact> contacts, String title)
+    {
+        if (contacts == null || contacts.isEmpty())
+        {
+            System.out.println("No contacts found.");
             return;
+        }
+
+        System.out.println();
+        System.out.println(title);
+        System.out.println();
+
+        int cellId       = W_ID + 2;
+        int cellName     = W_NAME + 2;
+        int cellNick     = W_NICK + 2;
+        int cellPrimary  = W_PRIMARY + 2;
+        int cellSecond   = W_SECOND + 2;
+        int cellEmail    = W_EMAIL + 2;
+        int cellLinkedIn = W_LINKEDIN + 2;
+
+        // Top border
+        String topBorder =
+            "┌" + "─".repeat(cellId) +
+            "┬" + "─".repeat(cellName) +
+            "┬" + "─".repeat(cellNick) +
+            "┬" + "─".repeat(cellPrimary) +
+            "┬" + "─".repeat(cellSecond) +
+            "┬" + "─".repeat(cellEmail) +
+            "┬" + "─".repeat(cellLinkedIn) +
+            "┐";
+
+        // Header/Body separator
+        String midBorder =
+            "├" + "─".repeat(cellId) +
+            "┼" + "─".repeat(cellName) +
+            "┼" + "─".repeat(cellNick) +
+            "┼" + "─".repeat(cellPrimary) +
+            "┼" + "─".repeat(cellSecond) +
+            "┼" + "─".repeat(cellEmail) +
+            "┼" + "─".repeat(cellLinkedIn) +
+            "┤";
+
+        // Bottom border
+        String bottomBorder =
+            "└" + "─".repeat(cellId) +
+            "┴" + "─".repeat(cellName) +
+            "┴" + "─".repeat(cellNick) +
+            "┴" + "─".repeat(cellPrimary) +
+            "┴" + "─".repeat(cellSecond) +
+            "┴" + "─".repeat(cellEmail) +
+            "┴" + "─".repeat(cellLinkedIn) +
+            "┘";
+
+        // Header row
+        String header =
+            "│ " + pad("ID",       W_ID)       +
+            " │ " + pad("Name",     W_NAME)     +
+            " │ " + pad("Nickname", W_NICK)     +
+            " │ " + pad("Primary",  W_PRIMARY)  +
+            " │ " + pad("Secondary",W_SECOND)   +
+            " │ " + pad("Email",    W_EMAIL)    +
+            " │ " + pad("LinkedIn", W_LINKEDIN) + " │";
+
+        System.out.println(topBorder);
+        System.out.println(header);
+        System.out.println(midBorder);
+
+        // Rows
+        for (Contact c : contacts)
+        {
+            String fullName = c.getFirstName() + " " + c.getLastName();
+
+            String secondaryPhone =
+                (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
+                    ? "-"
+                    : c.getPhoneSecondary();
+
+            String linkedin =
+                (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
+                    ? "-"
+                    : c.getLinkedinUrl();
+
+            String row =
+                "│ " + pad(String.valueOf(c.getContactId()), W_ID) +
+                " │ " + pad(fullName,                         W_NAME) +
+                " │ " + pad(c.getNickname(),                  W_NICK) +
+                " │ " + pad(c.getPhonePrimary(),              W_PRIMARY) +
+                " │ " + pad(secondaryPhone,                   W_SECOND) +
+                " │ " + pad(c.getEmail(),                     W_EMAIL) +
+                " │ " + pad(linkedin,                         W_LINKEDIN) + " │";
+
+            System.out.println(row);
+        }
+
+        System.out.println(bottomBorder);
+
     }
+    /**
+ * Allows the currently logged-in TESTER user to change their own password.
+ * Verifies the current password first, then asks for a new password twice.
+ */
+protected static void changePassword()
+{
+    User current = Session.getCurrentUser();
 
-    boolean ascending = (orderOpt == 1);
-
-    List<Contact> contacts = ContactDAO.getAllContacts();
-    ContactSorter.sort(contacts, field, ascending);
-
-    // Sütun genişlikleri
-    int W_ID       = 4;
-    int W_NAME     = 20;
-    int W_NICK     = 15;
-    int W_PRIMARY  = 15;
-    int W_SECOND   = 15;
-    int W_EMAIL    = 25;
-    int W_LINKEDIN = 30;
-
-    System.out.println("\n--- SORTED CONTACT LIST ---\n");
-
-    // HEADER
-    System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-        pad("ID",        W_ID),
-        pad("Name",      W_NAME),
-        pad("Nickname",  W_NICK),
-        pad("Primary",   W_PRIMARY),
-        pad("Secondary", W_SECOND),
-        pad("Email",     W_EMAIL),
-        pad("LinkedIn",  W_LINKEDIN)
-    );
-
-    System.out.println("-".repeat(
-        W_ID + W_NAME + W_NICK + W_PRIMARY + W_SECOND + W_EMAIL + W_LINKEDIN + (6 * 3)
-    ));
-
-    // ROWS
-    for (Contact c : contacts)
+    if (current == null)
     {
-        String fullName = c.getFirstName() + " " + c.getLastName();
-
-        String secondaryPhone = (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
-            ? "-"
-            : c.getPhoneSecondary();
-
-        String linkedin = (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
-            ? "-"
-            : c.getLinkedinUrl();
-
-        System.out.printf("%s | %s | %s | %s | %s | %s | %s\n",
-            pad(String.valueOf(c.getContactId()), W_ID),
-            pad(fullName,                        W_NAME),
-            pad(c.getNickname(),                 W_NICK),
-            pad(c.getPhonePrimary(),             W_PRIMARY),
-            pad(secondaryPhone,                  W_SECOND),
-            pad(c.getEmail(),                    W_EMAIL),
-            pad(linkedin,                        W_LINKEDIN)
-        );
+        System.out.println("No active session. Please log in again.");
+        return;
     }
+
+    System.out.println("\n--- CHANGE PASSWORD ---");
+
+    // 1) Eski şifreyi doğrula
+    String oldPassword = InputHelper.readNonEmptyString("Current password: ");
+
+    User verified = null;
+    try
+    {
+        verified = UserDAO.authenticate(current.getUsername(), oldPassword);
+    }
+    catch (Exception e)
+    {
+        System.out.println("An unexpected error occurred while verifying password.");
+        System.out.println("Please contact your system administrator.");
+        e.printStackTrace();
+        return;
+    }
+
+    if (verified == null)
+    {
+        System.out.println("Current password is incorrect.");
+        return;
+    }
+
+    // 2) Yeni şifreyi iste (iki kez)
+    String newPassword;
+    while (true)
+    {
+        newPassword = InputHelper.readNonEmptyString("New password: ");
+        String confirm = InputHelper.readNonEmptyString("Confirm new password: ");
+
+        if (!newPassword.equals(confirm))
+        {
+            System.out.println("Passwords do not match. Please try again.\n");
+            continue;
+        }
+
+        if (newPassword.length() < 6)
+        {
+            System.out.println("Password must be at least 6 characters long.\n");
+            continue;
+        }
+
+        break;
+    }
+
+    // 3) Veritabanında güncelle
+    boolean ok;
+    try
+    {
+        // Bu satırdaki metot ismini kendi UserDAO'n ile eşleştir:
+        // Örneğin: updatePassword(userId, plainPassword) veya benzeri.
+        ok = UserDAO.updatePassword(current.getUserId(), newPassword);
+    }
+    catch (Exception e)
+    {
+        System.out.println("An unexpected error occurred while updating the password.");
+        e.printStackTrace();
+        return;
+    }
+
+    if (ok)
+    {
+        System.out.println("Password successfully updated.");
+    }
+    else
+    {
+        System.out.println("Failed to update password.");
+    }
+
 }
 
 
-}

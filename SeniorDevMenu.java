@@ -1,5 +1,4 @@
 // File: SeniorDevMenu.java
-import java.util.List;
 import java.time.LocalDate;
 
 /**
@@ -9,6 +8,15 @@ import java.time.LocalDate;
  */
 public class SeniorDevMenu extends JuniorDevMenu
 {
+    
+    private static final String RESET  = "\u001B[0m";
+    private static final String BLUE   = "\u001B[38;2;100;150;255m";
+    private static final String PURPLE = "\u001B[38;2;180;100;255m";
+    private static final String CYAN   = "\u001B[38;2;0;255;255m";
+    private static final String RED    = "\u001B[38;2;255;80;80m";
+    private static final String WHITE  = "\u001B[38;2;255;255;255m";
+    private static final String BRIGHT = "\u001B[1m"; // Bold
+
     /**
      * Starts the Senior Developer menu loop. Displays options and executes
      * the selected operations until the user chooses to "Logout" (0).
@@ -17,17 +25,33 @@ public class SeniorDevMenu extends JuniorDevMenu
     {
         while (true)
         {
-            System.out.println("\n=== SENIOR DEV MENU ===");
-            System.out.println("1) Add Contact");
-            System.out.println("2) Delete Contact");
-            System.out.println("3) Update Contact");
-            System.out.println("4) List Contacts");
-            System.out.println("5) Search Contacts");
-            System.out.println("6) Sort Contacts");
-            System.out.println("7) Undo last action");
-            System.out.println("0) Logout");
+            System.out.println();
 
-            int choice = InputHelper.readInt("Choice: ");
+            // Başlık tasarımı
+            String title = "🛠️  SENIOR DEV MENU";
+            int len = title.length();
+
+            String border = WHITE + "       ┌" + "─".repeat(len) + "┐" + RESET;
+            String middle = WHITE + "       │" + RESET + BLUE + BRIGHT + title + RESET + WHITE + " │" + RESET;
+            String bottom = WHITE + "       └" + "─".repeat(len) + "┘" + RESET;
+
+            System.out.println(border);
+            System.out.println(middle);
+            System.out.println(bottom);
+
+            // Menü seçenekleri
+            System.out.println(WHITE + "┌──────────────────────────────────┐" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "1) " + RESET + "Add Contact                   " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "2) " + RESET + "Delete Contact                " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "3) " + RESET + "Update Contact                " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "4) " + RESET + "List Contacts                 " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "5) " + RESET + "Search Contacts               " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "6) " + RESET + "Sort Contacts                 " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "7) " + RESET + "Undo last action              " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "0) " + RESET + "Logout                        " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "└──────────────────────────────────┘" + RESET);
+
+            int choice = InputHelper.readInt(PURPLE + "Choice: " + RESET);
 
             switch (choice)
             {
@@ -61,10 +85,11 @@ public class SeniorDevMenu extends JuniorDevMenu
 
                 case 0:
                     Session.clear();
+                    System.out.println(PURPLE + "Logged out." + RESET);
                     return;
 
                 default:
-                    System.out.println("Invalid option.");
+                    System.out.println(RED + "Invalid option." + RESET);
             }
         }
     }
@@ -110,6 +135,7 @@ public class SeniorDevMenu extends JuniorDevMenu
         {
             System.out.println("Failed to add contact.");
         }
+        InputHelper.waitForEnter();
     }
 
     /**
@@ -126,6 +152,7 @@ public class SeniorDevMenu extends JuniorDevMenu
         if (existing == null)
         {
             System.out.println("Contact not found.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -149,5 +176,6 @@ public class SeniorDevMenu extends JuniorDevMenu
         {
             System.out.println("Failed to delete contact.");
         }
+        InputHelper.waitForEnter();
     }
 }

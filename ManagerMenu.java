@@ -8,6 +8,17 @@ import java.util.List;
  */
 public class ManagerMenu
 {
+
+    private static final String RESET  = "\u001B[0m";
+    private static final String GOLD   = "\u001B[38;2;255;215;0m";
+    private static final String GREEN  = "\u001B[38;2;0;200;120m";
+    private static final String CYAN   = "\u001B[38;2;0;255;255m";
+    private static final String RED    = "\u001B[38;2;255;80;80m";
+    private static final String WHITE  = "\u001B[38;2;255;255;255m";
+    private static final String BOLD   = "\u001B[1m";
+
+
+
     /**
      * Starts the Manager menu loop. Displays options and executes
      * the selected operations until the user chooses to "Logout" (0).
@@ -16,16 +27,32 @@ public class ManagerMenu
     {
         while (true)
         {
-            System.out.println("\n=== MANAGER MENU ===");
-            System.out.println("1) Add User");
-            System.out.println("2) Update User");
-            System.out.println("3) Delete User");
-            System.out.println("4) List Users");
-            System.out.println("5) Show Statistics");
-            System.out.println("6) Undo last action");
-            System.out.println("0) Logout");
+            System.out.println();
 
-            int choice = InputHelper.readInt("Choice: ");
+            // Başlık kutusu
+            String title = "👑📊  MANAGER MENU";
+            int len = title.length();
+
+            String border = WHITE + "        ┌" + "─".repeat(len) + "┐" + RESET;
+            String middle = WHITE + "        │" + RESET + GOLD + BOLD + title + RESET + WHITE + "│" + RESET;
+            String bottom = WHITE + "        └" + "─".repeat(len) + "┘" + RESET;
+
+            System.out.println(border);
+            System.out.println(middle);
+            System.out.println(bottom);
+
+            // Menü kutusu
+            System.out.println(WHITE + "┌──────────────────────────────────┐" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "1) " + RESET + "Add User                      " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "2) " + RESET + "Update User                   " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "3) " + RESET + "Delete User                   " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "4) " + RESET + "List Users                    " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "5) " + RESET + "Show Statistics               " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "6) " + RESET + "Undo last action              " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "│ " + CYAN + "0) " + RESET + "Logout                        " + WHITE + "│" + RESET);
+            System.out.println(WHITE + "└──────────────────────────────────┘" + RESET);
+
+            int choice = InputHelper.readInt(GREEN + "Choice: " + RESET);
 
             switch (choice)
             {
@@ -55,13 +82,19 @@ public class ManagerMenu
 
                 case 0:
                     Session.clear();
+                    System.out.println(GREEN + "Logged out." + RESET);
                     return;
 
                 default:
-                    System.out.println("Invalid option.");
+                    System.out.println(RED + "Invalid option." + RESET);
+                    InputHelper.waitForEnter();
+
             }
         }
     }
+
+
+    
 
     /**
      * Creates a new user in the system. Collects username, password, name,
@@ -81,6 +114,7 @@ public class ManagerMenu
         {
             System.out.println("A user with this username already exists (ID: " + existing.getUserId() + ").");
             System.out.println("Please choose a different username.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -100,6 +134,8 @@ public class ManagerMenu
         {
             System.out.println("Failed to add user.");
         }
+        InputHelper.waitForEnter();
+
     }
 
     /**
@@ -116,6 +152,7 @@ public class ManagerMenu
         if (existing == null)
         {
             System.out.println("User not found.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -197,6 +234,8 @@ public class ManagerMenu
         {
             System.out.println("Failed to update user.");
         }
+        InputHelper.waitForEnter();
+
     }
 
     /**
@@ -215,6 +254,7 @@ public class ManagerMenu
         if (existing == null)
         {
             System.out.println("User not found.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -261,6 +301,8 @@ public class ManagerMenu
         {
             System.out.println("Failed to delete user.");
         }
+        InputHelper.waitForEnter();
+
     }
 
     /**
@@ -288,6 +330,8 @@ public class ManagerMenu
                 " | " + u.getRole()
             );
         }
+        InputHelper.waitForEnter();
+
     }
 
 }

@@ -38,6 +38,8 @@ public class ContactStatistics
         printPhonePrefixDistribution(all);
 
         System.out.println("\n--- END OF STATISTICS ---\n");
+        InputHelper.waitForEnter();
+
     }
 
     // ------------------ AGE CALCULATION ------------------
@@ -169,6 +171,8 @@ public class ContactStatistics
         System.out.println("18–25 (Young):  " + young);
         System.out.println("26–40 (Adult):  " + adult);
         System.out.println("41+   (Senior): " + senior);
+
+
     }
 
     // ------------------ PHONE PREFIX DISTRIBUTION ------------------
@@ -211,5 +215,6 @@ public class ContactStatistics
         {
             System.out.println("Prefix +" + e.getKey() + ": " + e.getValue() + " contacts");
         }
+
     }
 }

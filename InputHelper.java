@@ -25,6 +25,29 @@ public class InputHelper
     }
 
 
+    public static void waitForEnter()
+    {
+        System.out.println("\nPress ENTER to continue...");
+
+        try
+        {
+            // Buffer'ı temizle (animasyon, eski input vs. kalmasın)
+            while (System.in.available() > 0)
+                System.in.read();
+
+            // ENTER bekle
+            System.in.read();
+
+            // Terminal temizle
+            System.out.print("\u001B[H\u001B[2J");
+            System.out.flush();
+        }
+        catch (Exception e)
+        {
+            // Ekstra güvenlik: hata olsa bile en azından break olur
+            System.out.println();
+        }
+    }
 
 
     // Boş olmayan string (zorunlu alanlar için)

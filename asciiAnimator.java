@@ -15,10 +15,6 @@ public class asciiAnimator
     private static final String ANSI_BOLD = "\u001B[1m";
     private static final String CLEAR = "\033[H\033[2J";
 
-     public static void main(String[] args)
-    {
-        playOpeningAnimation();  
-    }
 
     public static void playOpeningAnimation()
     {
