@@ -1,7 +1,9 @@
 // File: InputHelper.java
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -18,6 +20,7 @@ public class InputHelper
 
     private static boolean PHONE_GUIDANCE_SHOWN = false;
     private static boolean DATE_GUIDANCE_SHOWN  = false;
+    private static boolean LINKEDIN_GUIDANCE_SHOWN = false;
 
     /**
      * Reads a line of input as a string (can be empty).
@@ -86,6 +89,36 @@ public class InputHelper
         }
     }
 
+    public static String readOptionalName(String prompt)
+    {
+        while (true)
+        {
+            System.out.print(prompt + " (empty = skip): ");
+            String input = SCANNER.nextLine().trim();
+
+            if (input.isEmpty())
+            {
+                return null; // optional, skip
+            }
+
+            // Sadece harf ve boşluk kontrolü
+            if (!input.matches("[a-zA-ZçğıöşüÇĞİÖŞÜ ]+"))
+            {
+                System.out.println("Name must contain only letters and spaces.");
+                continue;
+            }
+
+            // Normalize: kelimelerin ilk harfini büyük yap
+            String formatted =
+                Arrays.stream(input.split("\\s+"))
+                    .map(s -> s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase())
+                    .collect(java.util.stream.Collectors.joining(" "));
+
+            return formatted;
+        }
+    }
+
+
     /**
      * Reads an integer from user input.
      *
@@ -143,11 +176,13 @@ public class InputHelper
         if (!DATE_GUIDANCE_SHOWN)
         {
             System.out.println("\nDate input guidance:");
-            System.out.println("- Please enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
-            System.out.println("- Logically invalid dates such as 2025-02-30 will be rejected.");
-            System.out.println("- If you make a mistake, simply enter the date again.\n");
+            System.out.println("- Enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
+            System.out.println("- Invalid dates such as 2025-02-30 will be rejected.");
+            System.out.println("- You cannot enter a future date.\n");
             DATE_GUIDANCE_SHOWN = true;
         }
+
+        LocalDate today = LocalDate.now();
 
         while (true)
         {
@@ -156,14 +191,23 @@ public class InputHelper
 
             try
             {
-                return LocalDate.parse(line);
+                LocalDate date = LocalDate.parse(line);
+
+                if (date.isAfter(today))
+                {
+                    System.out.println("You cannot enter a future date.");
+                    continue;
+                }
+
+                return date;
             }
             catch (DateTimeParseException e)
             {
-                System.out.println("Invalid date. Please use format YYYY-MM-DD.");
+                System.out.println("Invalid date. Please use YYYY-MM-DD (e.g., 2025-11-29).");
             }
         }
     }
+
 
     /**
      * Reads an optional date. Empty input returns null.
@@ -176,11 +220,14 @@ public class InputHelper
         if (!DATE_GUIDANCE_SHOWN)
         {
             System.out.println("\nDate input guidance:");
-            System.out.println("- Please enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
-            System.out.println("- Logically invalid dates such as 2025-02-30 will be rejected.");
-            System.out.println("- Leave the field empty if you do not want to change the date.\n");
+            System.out.println("- Enter dates in the format YYYY-MM-DD (e.g., 2025-11-29).");
+            System.out.println("- Invalid dates such as 2025-02-30 will be rejected.");
+            System.out.println("- Leave empty to keep existing date.");
+            System.out.println("- You cannot enter a future date.\n");
             DATE_GUIDANCE_SHOWN = true;
         }
+
+        LocalDate today = LocalDate.now();
 
         while (true)
         {
@@ -194,14 +241,23 @@ public class InputHelper
 
             try
             {
-                return LocalDate.parse(line);
+                LocalDate date = LocalDate.parse(line);
+
+                if (date.isAfter(today))
+                {
+                    System.out.println("You cannot enter a future date.");
+                    continue;
+                }
+
+                return date;
             }
             catch (DateTimeParseException e)
             {
-                System.out.println("Invalid date. Make sure the date exists in the calendar and use YYYY-MM-DD (e.g., 2025-11-29).");
+                System.out.println("Invalid date. Use YYYY-MM-DD and ensure the date exists.");
             }
         }
     }
+
 
     /**
      * Reads and validates an email address.
@@ -230,6 +286,8 @@ public class InputHelper
     /**
      * todo validate linkedin
      */
+
+    //todo future birthday not allowed
 
     /**
      * Reads an optional email. Empty input returns an empty string.
@@ -330,6 +388,86 @@ public class InputHelper
             System.out.println("Invalid phone number. Please try again.");
         }
     }
+
+    public static String readLinkedn(String prompt)
+    {
+        if (!LINKEDIN_GUIDANCE_SHOWN)
+        {
+            System.out.println("\nLinkedIn URL input guidance:");
+            System.out.println("- Please enter a valid LinkedIn profile URL.");
+            System.out.println("- Examples:");
+            System.out.println("  https://www.linkedin.com/in/your-name");
+            System.out.println("  https://linkedin.com/in/your-name-123456");
+            System.out.println("- Only linkedin.com URLs are accepted.\n");
+            LINKEDIN_GUIDANCE_SHOWN = true;
+        }
+
+        // (https?://)?(www.)?linkedin.com/(in|pub)/slug
+        String regex = "^(https?://)?(www\\.)?linkedin\\.com/(in|pub)/[A-Za-z0-9\\-_%]+/?$";
+        Pattern pattern = Pattern.compile(regex);
+
+        while (true)
+        {
+            System.out.print(prompt + " ");
+            String line = SCANNER.nextLine().trim();
+
+            if (line.isEmpty())
+            {
+                System.out.println("LinkedIn URL cannot be empty. Please enter a valid URL.");
+                continue;
+            }
+
+            Matcher matcher = pattern.matcher(line);
+
+            if (!matcher.matches())
+            {
+                System.out.println("Invalid LinkedIn URL.");
+                System.out.println("Make sure it looks like: https://www.linkedin.com/in/your-name");
+                continue;
+            }
+
+            return line;
+        }
+    }
+
+    public static String readOptionalLinkedin(String prompt)
+    {
+        if (!LINKEDIN_GUIDANCE_SHOWN)
+        {
+            System.out.println("\nLinkedIn URL input guidance:");
+            System.out.println("- Enter a LinkedIn profile URL or leave empty to skip.");
+            System.out.println("- Accepted examples:");
+            System.out.println("  https://www.linkedin.com/in/your-name");
+            System.out.println("  https://linkedin.com/in/your-name-123456\n");
+            LINKEDIN_GUIDANCE_SHOWN = true;
+        }
+
+        String regex = "^(https?://)?(www\\.)?linkedin\\.com/(in|pub)/[A-Za-z0-9\\-_%]+/?$";
+        Pattern pattern = Pattern.compile(regex);
+
+        while (true)
+        {
+            System.out.print(prompt + " (empty = skip): ");
+            String line = SCANNER.nextLine().trim();
+
+            if (line.isEmpty())
+            {
+                return null; // optional field, skip allowed
+            }
+
+            Matcher m = pattern.matcher(line);
+
+            if (!m.matches())
+            {
+                System.out.println("Invalid LinkedIn URL. Example: https://www.linkedin.com/in/your-name");
+                continue;
+            }
+
+            return line;
+        }
+    }
+
+
 
     /**
      * Reads a yes/no answer from the user. Supports English and Turkish inputs.

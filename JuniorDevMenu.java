@@ -28,7 +28,6 @@ public class JuniorDevMenu extends TesterMenu
     {
         System.out.println();
 
-        // Başlık kutusu
         String title = "👶💻  JUNIOR DEV MENU";
         int len = title.length();
 
@@ -40,7 +39,6 @@ public class JuniorDevMenu extends TesterMenu
         System.out.println(middle);
         System.out.println(bottom);
 
-        // Menü seçenek kutusu
         System.out.println(WHITE + "┌──────────────────────────────────┐" + RESET);
         System.out.println(WHITE + "│ " + BLUE + "1) " + RESET + "Update Contact                " + WHITE + "│" + RESET);
         System.out.println(WHITE + "│ " + BLUE + "2) " + RESET + "List Contacts                 " + WHITE + "│" + RESET);
@@ -117,18 +115,25 @@ public class JuniorDevMenu extends TesterMenu
                                                             "]: ");
         String lastName       = InputHelper.readOptionalString("New last name [" + existing.getLastName() + "]: ");
         String nickname       = InputHelper.readOptionalString("New nickname [" + existing.getNickname() + "]: ");
-        String phonePrimary   = InputHelper.readOptionalString("New primary phone [" + existing.getPhonePrimary() + "]: ");
-        String phoneSecondary = InputHelper.readOptionalString("New secondary phone [" +
+        String phonePrimary   = InputHelper.readOptionalPhone("New primary phone [" + existing.getPhonePrimary() + "]: ");
+        String phoneSecondary = InputHelper.readOptionalPhone("New secondary phone [" +
                                                             (existing.getPhoneSecondary() == null ? "" : existing.getPhoneSecondary()) +
                                                             "]: ");
-        String email          = InputHelper.readOptionalString("New email [" + existing.getEmail() + "]: ");
-        String linkedinUrl    = InputHelper.readOptionalString("New LinkedIn URL [" +
-                                                            (existing.getLinkedinUrl() == null ? "" : existing.getLinkedinUrl()) +
-                                                            "]: ");
+        String email          = InputHelper.readOptionalEmail("New email [" + existing.getEmail() + "]: ");
+        String linkedinUrl    = InputHelper.readOptionalLinkedin(
+            "New LinkedIn URL [" +
+            (existing.getLinkedinUrl() == null ? "" : existing.getLinkedinUrl()) +
+            "]: "
+        );
+
+        if (linkedinUrl == null || linkedinUrl.isEmpty())
+        {
+            linkedinUrl = existing.getLinkedinUrl();
+        }
+
 
         LocalDate birthDate   = InputHelper.readOptionalDate("New birth date");
 
-        // Boş girişleri eski değerlerle dolduruyoruz
         if (firstName.isEmpty())      firstName = existing.getFirstName();
         if (middleName.isEmpty())     middleName = existing.getMiddleName();
         if (lastName.isEmpty())       lastName = existing.getLastName();

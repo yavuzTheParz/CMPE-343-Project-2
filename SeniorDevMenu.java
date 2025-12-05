@@ -110,7 +110,7 @@ public class SeniorDevMenu extends JuniorDevMenu
         String email      = InputHelper.readEmail("Email: ");
         String phonePrimary   = InputHelper.readPhone("Primary phone: ");
         String phoneSecondary = InputHelper.readOptionalPhone("Secondary phone: ");
-        String linkedinUrl    = InputHelper.readString("LinkedIn URL (can be empty): ");
+        String linkedinUrl    = InputHelper.readLinkedn("LinkedIn URL (can be empty): ");
         LocalDate birthDate   = InputHelper.readDate("Birth date");
 
         Contact contact = new Contact(

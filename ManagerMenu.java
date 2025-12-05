@@ -157,13 +157,9 @@ public class ManagerMenu
             return;
         }
 
-        System.out.println("Updating user: " +
-                           existing.getUsername() + " (" +
-                           existing.getName() + " " + existing.getSurname() + ")");
+        System.out.println("Current user:");
+        printUsersTable(List.of(existing), "--- CURRENT USER ---");
 
-        /**
-         * Read new values; if input is empty, the old value is kept.  
-        */
         String newUsername = InputHelper.readString("New username [" + existing.getUsername() + "]: ");
         if (newUsername.isEmpty())
         {
@@ -213,31 +209,34 @@ public class ManagerMenu
         }
 
         User updated = UserFactory.createUser(
-        existing.getUserId(),
-        newUsername,
-        existing.getPasswordHash(), 
-        /**
-        * hash is handled in DAO if necessary
-        */
-        newName,
-        newSurname,
-        newRole
+            existing.getUserId(),
+            newUsername,
+            existing.getPasswordHash(), // hash DAO'da gerekirse güncelleniyor
+            newName,
+            newSurname,
+            newRole
         );
 
         boolean ok = UserDAO.updateUser(updated, changePassword, newPassword);
 
-
         if (ok)
         {
             System.out.println("User updated.");
+
+            User refreshed = UserDAO.getUserById(existing.getUserId());
+            if (refreshed != null)
+            {
+                printUsersTable(List.of(refreshed), "--- UPDATED USER ---");
+            }
         }
         else
         {
             System.out.println("Failed to update user.");
         }
-        InputHelper.waitForEnter();
 
+        InputHelper.waitForEnter();
     }
+
 
     /**
      * Deletes a user from the system based on the provided ID.
@@ -260,35 +259,36 @@ public class ManagerMenu
         }
 
         User current = Session.getCurrentUser();
-        /**
-         * A) Manager cannot delete their own account
-        */
+
+        // A) Manager cannot delete their own account
         if (current != null && current.getUserId() == userId)
         {
             System.out.println("You cannot delete your own account.");
+            InputHelper.waitForEnter();
             return;
         }
-        /** 
-         * B) At least one MANAGER must remain in the system 
-        */
+
+        // B) At least one MANAGER must remain in the system
         if (existing.getRole() == Role.MANAGER)
         {
             int managerCount = UserDAO.countManagers();
             if (managerCount <= 1)
             {
                 System.out.println("You cannot delete the last MANAGER user.");
+                InputHelper.waitForEnter();
                 return;
             }
         }
 
-        System.out.println("You are about to delete: " +
-                           existing.getUsername() + " (" +
-                           existing.getName() + " " + existing.getSurname() + ")");
+        System.out.println("You are about to delete this user:");
+        printUsersTable(List.of(existing), "--- USER TO DELETE ---");
+
         boolean confirm = InputHelper.readYesNo("Are you sure");
 
         if (!confirm)
         {
             System.out.println("Delete cancelled.");
+            InputHelper.waitForEnter();
             return;
         }
 
@@ -302,9 +302,10 @@ public class ManagerMenu
         {
             System.out.println("Failed to delete user.");
         }
-        InputHelper.waitForEnter();
 
+        InputHelper.waitForEnter();
     }
+
 
     /**
      * Retrieves all users from the database and prints them to the console.
@@ -313,27 +314,106 @@ public class ManagerMenu
     //todo fix output
     private static void listUsers()
     {
-        System.out.println("\n--- USER LIST ---");
-
         List<User> users = UserDAO.getAllUsers();
 
         if (users.isEmpty())
+        {
+            System.out.println("\n--- USER LIST ---");
+            System.out.println("No users found.");
+            InputHelper.waitForEnter();
+            return;
+        }
+
+        printUsersTable(users, "--- USER LIST ---");
+        InputHelper.waitForEnter();
+    }
+
+
+    // USER TABLE COLUMN WIDTHS
+    private static final int U_ID       = 4;
+    private static final int U_USERNAME = 16;
+    private static final int U_NAME     = 22; // name + surname
+    private static final int U_ROLE     = 12;
+
+    private static String pad(String text, int width)
+    {
+        if (text == null)
+        {
+            text = "-";
+        }
+
+        if (text.length() > width)
+        {
+            return text.substring(0, width);
+        }
+
+        return String.format("%-" + width + "s", text);
+    }
+
+    private static void printUsersTable(List<User> users, String title)
+    {
+        if (users == null || users.isEmpty())
         {
             System.out.println("No users found.");
             return;
         }
 
+        System.out.println();
+        System.out.println(title);
+        System.out.println();
+
+        int cellId   = U_ID + 2;
+        int cellUser = U_USERNAME + 2;
+        int cellName = U_NAME + 2;
+        int cellRole = U_ROLE + 2;
+
+        String topBorder =
+            "┌" + "─".repeat(cellId) +
+            "┬" + "─".repeat(cellUser) +
+            "┬" + "─".repeat(cellName) +
+            "┬" + "─".repeat(cellRole) +
+            "┐";
+
+        String midBorder =
+            "├" + "─".repeat(cellId) +
+            "┼" + "─".repeat(cellUser) +
+            "┼" + "─".repeat(cellName) +
+            "┼" + "─".repeat(cellRole) +
+            "┤";
+
+        String bottomBorder =
+            "└" + "─".repeat(cellId) +
+            "┴" + "─".repeat(cellUser) +
+            "┴" + "─".repeat(cellName) +
+            "┴" + "─".repeat(cellRole) +
+            "┘";
+
+        String header =
+            "│ " + pad("ID",       U_ID) +
+            " │ " + pad("Username", U_USERNAME) +
+            " │ " + pad("Name",     U_NAME) +
+            " │ " + pad("Role",     U_ROLE) + " │";
+
+        System.out.println(topBorder);
+        System.out.println(header);
+        System.out.println(midBorder);
+
         for (User u : users)
         {
-            System.out.println(
-                u.getUserId() + " - " +
-                u.getUsername() + " | " +
-                u.getName() + " " + u.getSurname() +
-                " | " + u.getRole()
-            );
-        }
-        InputHelper.waitForEnter();
+            String fullName = (u.getName() + " " + u.getSurname()).trim();
 
+            String row =
+                "│ " + pad(String.valueOf(u.getUserId()), U_ID) +
+                " │ " + pad(u.getUsername(),             U_USERNAME) +
+                " │ " + pad(fullName,                    U_NAME) +
+                " │ " + pad(u.getRole().name(),          U_ROLE) + " │";
+
+            System.out.println(row);
+        }
+
+        System.out.println(bottomBorder);
     }
+
+
 
 }

@@ -110,29 +110,6 @@ public class TesterMenu
     
 
     /**
-     * Pads or truncates the given text so that it fits in a fixed-width column.
-     * <p>
-     * If the text is {@code null}, a single dash ("-") is used instead.
-     * If the text is longer than the specified width, it is truncated.
-     * Otherwise it is right-padded with spaces.
-     * </p>
-     *
-     * @param text  the text to format (may be {@code null})
-     * @param width the target column width
-     * @return a non-null string with exactly {@code width} characters
-     */
-    private static String pad(String text, int width)
-    {
-        if (text == null)
-            text = "-";
-
-        if (text.length() > width)
-            return text.substring(0, width);
-
-        return String.format("%-" + width + "s", text);
-    }
-
-    /**
      * Allows the user to search through contacts based on selected criteria.
      * <p>
      * Supports both single-field and multi-field search options
@@ -272,15 +249,45 @@ public class TesterMenu
         InputHelper.waitForEnter();
     }
 
-        private static final int W_ID       = 4;
-        private static final int W_NAME     = 20;
-        private static final int W_NICK     = 15;
-        private static final int W_PRIMARY  = 15;
-        private static final int W_SECOND   = 15;
-        private static final int W_EMAIL    = 25;
-        private static final int W_LINKEDIN = 30;
+    private static final int W_ID        = 4;
+    private static final int W_FIRST     = 12;
+    private static final int W_MIDDLE    = 12;
+    private static final int W_LAST      = 12;
+    private static final int W_NICK      = 14;
+    private static final int W_PRIMARY   = 14;
+    private static final int W_SECONDARY = 14;
+    private static final int W_EMAIL     = 24;
+    private static final int W_LINKEDIN  = 40;
+    private static final int W_BIRTH     = 12;
 
 
+
+    /**
+     * Pads or truncates the given text so that it fits in a fixed-width column.
+     * <p>
+     * If the text is {@code null}, a single dash ("-") is used instead.
+     * If the text is longer than the specified width, it is truncated.
+     * Otherwise it is right-padded with spaces.
+     * </p>
+     *
+     * @param text  the text to format (may be {@code null})
+     * @param width the target column width
+     * @return a non-null string with exactly {@code width} characters
+     */
+    private static String pad(String text, int width)
+    {
+        if (text == null || text.isBlank())
+        {
+            text = "-";
+        }
+
+        if (text.length() > width)
+        {
+            return text.substring(0, width); // cut long text
+        }
+
+        return String.format("%-" + width + "s", text);
+    }
 
     private static void printContactsTable(List<Contact> contacts, String title)
     {
@@ -294,91 +301,94 @@ public class TesterMenu
         System.out.println(title);
         System.out.println();
 
-        int cellId       = W_ID + 2;
-        int cellName     = W_NAME + 2;
-        int cellNick     = W_NICK + 2;
-        int cellPrimary  = W_PRIMARY + 2;
-        int cellSecond   = W_SECOND + 2;
-        int cellEmail    = W_EMAIL + 2;
-        int cellLinkedIn = W_LINKEDIN + 2;
+        int cID   = W_ID + 2;
+        int cF    = W_FIRST + 2;
+        int cM    = W_MIDDLE + 2;
+        int cL    = W_LAST + 2;
+        int cN    = W_NICK + 2;
+        int cP    = W_PRIMARY + 2;
+        int cS    = W_SECONDARY + 2;
+        int cMail = W_EMAIL + 2;
+        int cLin  = W_LINKEDIN + 2;
+        int cB    = W_BIRTH + 2;
 
-        // Top border
-        String topBorder =
-            "┌" + "─".repeat(cellId) +
-            "┬" + "─".repeat(cellName) +
-            "┬" + "─".repeat(cellNick) +
-            "┬" + "─".repeat(cellPrimary) +
-            "┬" + "─".repeat(cellSecond) +
-            "┬" + "─".repeat(cellEmail) +
-            "┬" + "─".repeat(cellLinkedIn) +
+        String top =
+            "┌" + "─".repeat(cID) +
+            "┬" + "─".repeat(cF) +
+            "┬" + "─".repeat(cM) +
+            "┬" + "─".repeat(cL) +
+            "┬" + "─".repeat(cN) +
+            "┬" + "─".repeat(cP) +
+            "┬" + "─".repeat(cS) +
+            "┬" + "─".repeat(cMail) +
+            "┬" + "─".repeat(cLin) +
+            "┬" + "─".repeat(cB) +
             "┐";
 
-        // Header/Body separator
-        String midBorder =
-            "├" + "─".repeat(cellId) +
-            "┼" + "─".repeat(cellName) +
-            "┼" + "─".repeat(cellNick) +
-            "┼" + "─".repeat(cellPrimary) +
-            "┼" + "─".repeat(cellSecond) +
-            "┼" + "─".repeat(cellEmail) +
-            "┼" + "─".repeat(cellLinkedIn) +
+        String mid =
+            "├" + "─".repeat(cID) +
+            "┼" + "─".repeat(cF) +
+            "┼" + "─".repeat(cM) +
+            "┼" + "─".repeat(cL) +
+            "┼" + "─".repeat(cN) +
+            "┼" + "─".repeat(cP) +
+            "┼" + "─".repeat(cS) +
+            "┼" + "─".repeat(cMail) +
+            "┼" + "─".repeat(cLin) +
+            "┼" + "─".repeat(cB) +
             "┤";
 
-        // Bottom border
-        String bottomBorder =
-            "└" + "─".repeat(cellId) +
-            "┴" + "─".repeat(cellName) +
-            "┴" + "─".repeat(cellNick) +
-            "┴" + "─".repeat(cellPrimary) +
-            "┴" + "─".repeat(cellSecond) +
-            "┴" + "─".repeat(cellEmail) +
-            "┴" + "─".repeat(cellLinkedIn) +
+        String bottom =
+            "└" + "─".repeat(cID) +
+            "┴" + "─".repeat(cF) +
+            "┴" + "─".repeat(cM) +
+            "┴" + "─".repeat(cL) +
+            "┴" + "─".repeat(cN) +
+            "┴" + "─".repeat(cP) +
+            "┴" + "─".repeat(cS) +
+            "┴" + "─".repeat(cMail) +
+            "┴" + "─".repeat(cLin) +
+            "┴" + "─".repeat(cB) +
             "┘";
 
-        // Header row
         String header =
-            "│ " + pad("ID",       W_ID)       +
-            " │ " + pad("Name",     W_NAME)     +
-            " │ " + pad("Nickname", W_NICK)     +
-            " │ " + pad("Primary",  W_PRIMARY)  +
-            " │ " + pad("Secondary",W_SECOND)   +
-            " │ " + pad("Email",    W_EMAIL)    +
-            " │ " + pad("LinkedIn", W_LINKEDIN) + " │";
+            "│ " + pad("ID",        W_ID) +
+            " │ " + pad("First",     W_FIRST) +
+            " │ " + pad("Middle",    W_MIDDLE) +
+            " │ " + pad("Last",      W_LAST) +
+            " │ " + pad("Nick",      W_NICK) +
+            " │ " + pad("Primary",   W_PRIMARY) +
+            " │ " + pad("Secondary", W_SECONDARY) +
+            " │ " + pad("Email",     W_EMAIL) +
+            " │ " + pad("LinkedIn",  W_LINKEDIN) +
+            " │ " + pad("Birth",     W_BIRTH) +
+            " │";
 
-        System.out.println(topBorder);
+        System.out.println(top);
         System.out.println(header);
-        System.out.println(midBorder);
+        System.out.println(mid);
 
-        // Rows
         for (Contact c : contacts)
         {
-            String fullName = c.getFirstName() + " " + c.getLastName();
-
-            String secondaryPhone =
-                (c.getPhoneSecondary() == null || c.getPhoneSecondary().isBlank())
-                    ? "-"
-                    : c.getPhoneSecondary();
-
-            String linkedin =
-                (c.getLinkedinUrl() == null || c.getLinkedinUrl().isBlank())
-                    ? "-"
-                    : c.getLinkedinUrl();
-
             String row =
                 "│ " + pad(String.valueOf(c.getContactId()), W_ID) +
-                " │ " + pad(fullName,                         W_NAME) +
-                " │ " + pad(c.getNickname(),                  W_NICK) +
-                " │ " + pad(c.getPhonePrimary(),              W_PRIMARY) +
-                " │ " + pad(secondaryPhone,                   W_SECOND) +
-                " │ " + pad(c.getEmail(),                     W_EMAIL) +
-                " │ " + pad(linkedin,                         W_LINKEDIN) + " │";
+                " │ " + pad(c.getFirstName(),               W_FIRST) +
+                " │ " + pad(c.getMiddleName(),              W_MIDDLE) +
+                " │ " + pad(c.getLastName(),                W_LAST) +
+                " │ " + pad(c.getNickname(),                W_NICK) +
+                " │ " + pad(c.getPhonePrimary(),            W_PRIMARY) +
+                " │ " + pad(c.getPhoneSecondary(),          W_SECONDARY) +
+                " │ " + pad(c.getEmail(),                   W_EMAIL) +
+                " │ " + pad(c.getLinkedinUrl(),             W_LINKEDIN) +
+                " │ " + pad(c.getBirthDate() == null ? "-" : c.getBirthDate().toString(), W_BIRTH) +
+                " │";
 
             System.out.println(row);
         }
 
-        System.out.println(bottomBorder);
-
+        System.out.println(bottom);
     }
+
     /**
      * Allows the currently logged-in TESTER user to change their own password.
      * Verifies the current password first, then asks for a new password twice.
@@ -472,6 +482,8 @@ public class TesterMenu
         }
         InputHelper.waitForEnter();
     }
+
+    
 
 }
 

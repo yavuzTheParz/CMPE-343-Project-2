@@ -32,12 +32,5 @@ public class App
         System.out.println("Goodbye.");
     }
 
-    /**
-     * Prints the initial welcome banner for the application.
-     * <p>
-     * This method is called before the login screen and is responsible
-     * for introducing the Contact Management System in a simple text-based UI.
-     * </p>
-     */
 }
 
