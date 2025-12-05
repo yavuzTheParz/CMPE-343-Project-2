@@ -34,7 +34,6 @@ public class TesterMenu
             String title = "🧪 TESTER MENU";
             int len = title.length();
 
-            // Başlık kutusu
             String border  = WHITE + "        ┌" + "─".repeat(len) + "┐" + RESET;
             String middle  = WHITE + "        │" + RESET + CYAN + title + RESET + WHITE + "│" + RESET;
             String bottom  = WHITE + "        └" + "─".repeat(len) + "┘" + RESET;
@@ -43,7 +42,6 @@ public class TesterMenu
             System.out.println(middle);
             System.out.println(bottom);
 
-            // Menü seçenekleri
             System.out.println(WHITE + "┌──────────────────────────────┐" + RESET);
             System.out.println(WHITE + "│ " + YELLOW + "1) " + RESET + "List Contacts             " + WHITE + "│" + RESET);
             System.out.println(WHITE + "│ " + YELLOW + "2) " + RESET + "Search Contacts           " + WHITE + "│" + RESET);
